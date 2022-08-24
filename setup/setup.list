@@ -11,7 +11,7 @@
                         "URL": "https://g-c662a6.a78b8.36fe.data.globus.org/ucvm/v22_7/model/scpbr.tar.gz",
                         "Flags": "--enable-model-scpbr --with-scpbr-lib-path=lib --with-scpbr-include-path=include --with-scpbr-model-path=src",
                         "Ask": "yes",
-                        "md5sum": "04d8ff007566b4454d2b8db017ef01e4",
+                        "md5sum": "eb427adb75587e9743d0066ccd2bf838",
                         "Order": 22
                 },
                 "CVMHSMBN": {
