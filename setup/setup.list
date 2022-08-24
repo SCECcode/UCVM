@@ -3,6 +3,17 @@
                "Version": "22.7"
                },
 	"models": {
+               "SCPBR": {
+                        "Version": "1.0",
+                        "Abbreviation": "scpbr",
+                        "Size": "1.6G",
+                        "Path": "scpbr",
+                        "URL": "https://g-c662a6.a78b8.36fe.data.globus.org/ucvm/v22_7/model/scpbr.tar.gz",
+                        "Flags": "--enable-model-scpbr --with-scpbr-lib-path=lib --with-scpbr-include-path=include --with-scpbr-model-path=src",
+                        "Ask": "yes",
+                        "md5sum": "ae7e1f07db5f812f67a9034cc74438d5",
+                        "Order": 22
+                },
                 "CVMHSMBN": {
                         "Version": "1.0",
                         "Abbreviation": "cvmhsmbn",

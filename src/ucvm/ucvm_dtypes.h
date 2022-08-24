@@ -71,6 +71,7 @@
 #define UCVM_MODEL_CVMS5 "cvms5"
 #define UCVM_MODEL_CVMS "cvms"
 #define UCVM_MODEL_CVMSI "cvmsi"
+#define UCVM_MODEL_SCPBR "scpbr"
 #define UCVM_MODEL_IVLSU "ivlsu"
 #define UCVM_MODEL_CVLSU "cvlsu"
 #define UCVM_MODEL_ALBACORE "albacore"

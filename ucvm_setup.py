@@ -277,6 +277,9 @@ def _add2LIBRARYPATH_bash(modelsToInstall, librariesToInstall) :
     if "WFCVM" in modelsToInstall:
         str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/wfcvm/lib\n"
         str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/wfcvm/lib\n"
+    if "SCPBR" in modelsToInstall:
+        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/scpbr/lib\n"
+        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/scpbr/lib\n"
     if "IMPERIAL" in modelsToInstall:
         str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/ivlsu/lib\n"
         str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/ivlsu/lib\n"
@@ -429,6 +432,9 @@ def _add2LIBRARYPATH_python(modelsToInstall, librariesToInstall) :
     if "WFCVM" in modelsToInstall:
         str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/wfcvm/lib\")\n"
         str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/wfcvm/lib\")\n"
+    if "SCPBR" in modelsToInstall:
+        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/scpbr/lib\")\n"
+        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/scpbr/lib\")\n"
     if "IMPERIAL" in modelsToInstall:
         str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/ivlsu/lib\")\n"
         str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/ivlsu/lib\")\n"
@@ -546,6 +552,8 @@ def _addInstallNameTool_bash(modelsToInstall, librariesToInstall):
         str=str+"install_name_tool -change libcvms.so ${MY_UCVM_INSTALL_PATH}/model/cvms/lib/libcvms.so $1\n"
     if "WFCVM" in modelsToInstall:
         str=str+"install_name_tool -change libwfcvm.so ${MY_UCVM_INSTALL_PATH}/model/wfcvm/lib/libwfcvm.so $1\n"
+    if "SCPBR" in modelsToInstall:
+        str=str+"install_name_tool -change libscpbr.so ${MY_UCVM_INSTALL_PATH}/model/scpbr/lib/libscpbr.so $1\n"
     if "IMPERIAL" in modelsToInstall:
         str=str+"install_name_tool -change libivlsu.so ${MY_UCVM_INSTALL_PATH}/model/ivlsu/lib/libivlsu.so $1\n"
     if "COACHELLA" in modelsToInstall:

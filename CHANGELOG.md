@@ -1,3 +1,6 @@
+## Current
+* Added SCPBR
+
 ## 2022-07-01 Mei-Hui Su <mei@usc.edu>
 * CVMS,CVMS5,CVMSI,WFCFM are all dynamically loadable models
 * Added CVMHLABN/CVMHSGBN/CVMHVBN/CVMHIBBN/CVMHRBN and

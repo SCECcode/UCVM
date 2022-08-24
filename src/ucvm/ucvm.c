@@ -1140,6 +1140,13 @@ int ucvm_get_resources(ucvm_resource_t *res, int *len)
 #endif
 
 /*** for plugin ***/
+#ifdef _UCVM_ENABLE_SCPBR
+  if (ucvm_save_resource(UCVM_RESOURCE_MODEL, UCVM_MODEL_CRUSTAL,
+                     UCVM_MODEL_SCPBR, "", res, numinst++, *len)
+      != UCVM_CODE_SUCCESS) {
+    return(UCVM_CODE_ERROR);
+  }
+#endif
 #ifdef _UCVM_ENABLE_IVLSU
   if (ucvm_save_resource(UCVM_RESOURCE_MODEL, UCVM_MODEL_CRUSTAL,
                      UCVM_MODEL_IVLSU, "", res, numinst++, *len)

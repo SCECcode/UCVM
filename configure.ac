@@ -73,6 +73,12 @@ AC_ARG_ENABLE([model-cvms],
         [enable_model_cvms=yes],
         [enable_model_cvms=no])
 
+AC_ARG_ENABLE([model-scpbr],
+        [AS_HELP_STRING([--enable-model-scpbr],
+        [enable model SCEC SCPBR])],
+        [enable_model_scpbr=yes],
+        [enable_model_scpbr=no])
+
 AC_ARG_ENABLE([model-ivlsu],
         [AS_HELP_STRING([--enable-model-ivlsu],
         [enable model SCEC IMPERIAL])],
@@ -334,6 +340,19 @@ AC_ARG_WITH([cvmsi-model-path],
   [AS_HELP_STRING([--with-cvmsi-model-path], [location of the CVM-SI model files])],
   [CVMS_MODEL="$withval"],
   [CVMS_MODEL="/usr/cvmsi/src"])
+fi
+
+# Get SCEC SCPBR library and include locations
+if test "x$enable_model_scpbr" = xyes; then
+AC_ARG_WITH([scpbr-include-path],
+  [AS_HELP_STRING([--with-scpbr-include-path],
+    [location of the SCEC SCPBR headers])],
+  [SCPBR_INCL="-I$withval"],
+  [SCPBR_INCL="/usr/include/scpbr"])
+AC_ARG_WITH([scpbr-lib-path],
+  [AS_HELP_STRING([--with-scpbr-lib-path], [location of the SCEC SCPBR libraries])],
+  [SCPBR_LIB="-L$withval -lscpbr"],
+  [SCPBR_LIB="-lscpbr"])
 fi
 
 # Get SCEC IMPERIAL library and include locations
@@ -820,6 +839,23 @@ else
     AM_CONDITIONAL(UCVM_AM_ENABLE_CVMSI, [test x"$enable_model_cvmsi" = xyes])
 fi
 
+# Check optional SCEC SCPBR installation
+if test "x$enable_static" = xyes; then
+if test "x$enable_model_scpbr" = xyes; then
+   # Setup compiler/linker flags
+   CFLAGS="$SCPBR_INCL $CFLAGS"
+   LDFLAGS="$SCPBR_LIB $LDFLAGS"
+
+   echo "Checking for SCEC SCPBR"
+   AC_CHECK_LIB(scpbr, ivlsu_init,[AM_CONDITIONAL(UCVM_AM_ENABLE_SCPBR, true)], [AC_MSG_ERROR(["SCEC SCPBR library not found; use --with-scpbr-lib-path"])],[-lm])
+   AC_CHECK_HEADER(scpbr.h,[],[AC_MSG_ERROR(["SCEC SCPBR header not found; use --with-scpbr-include-path"])],[AC_INCLUDES_DEFAULT])
+else
+   AM_CONDITIONAL(UCVM_AM_ENABLE_SCPBR, false)
+fi
+else
+   AM_CONDITIONAL(UCVM_AM_ENABLE_SCPBR, [test x"$enable_model_scpbr" = xyes])
+fi
+
 # Check optional SCEC IMPERIAL installation
 if test "x$enable_static" = xyes; then
 if test "x$enable_model_ivlsu" = xyes; then
@@ -828,7 +864,7 @@ if test "x$enable_model_ivlsu" = xyes; then
    LDFLAGS="$IVLSU_LIB $LDFLAGS"
 
    echo "Checking for SCEC IMPERIAL"
-   AC_CHECK_LIB(albacore, ivlsu_init,[AM_CONDITIONAL(UCVM_AM_ENABLE_IVLSU, true)], [AC_MSG_ERROR(["SCEC IMPERIAL library not found; use --with-ivlsu-lib-path"])],[-lproj -letree -lm])
+   AC_CHECK_LIB(ivlsu, ivlsu_init,[AM_CONDITIONAL(UCVM_AM_ENABLE_IVLSU, true)], [AC_MSG_ERROR(["SCEC IMPERIAL library not found; use --with-ivlsu-lib-path"])],[-lproj -letree -lm])
    AC_CHECK_HEADER(ivlsu.h,[],[AC_MSG_ERROR(["SCEC IMPERIAL header not found; use --with-ivlsu-include-path"])],[AC_INCLUDES_DEFAULT])
 else
    AM_CONDITIONAL(UCVM_AM_ENABLE_IVLSU, false)

@@ -80,6 +80,13 @@ bin_PROGRAMS += run_ucvm_query_cca_c.sh
 run_ucvm_query_cca_c_sh_SOURCES = run_ucvm_query_cca_c.sh
 endif
 
+if UCVM_AM_ENABLE_SCPBR
+bin_PROGRAMS += run_ucvm_query_scpbr.sh
+run_ucvm_query_scpbr_sh_SOURCES = run_ucvm_query_scpbr.sh
+bin_PROGRAMS += run_ucvm_query_scpbr_c.sh
+run_ucvm_query_scpbr_c_sh_SOURCES = run_ucvm_query_scpbr_c.sh
+endif
+
 if UCVM_AM_ENABLE_CVLSU
 bin_PROGRAMS += run_ucvm_query_cvlsu.sh
 run_ucvm_query_cvlsu_sh_SOURCES = run_ucvm_query_cvlsu.sh

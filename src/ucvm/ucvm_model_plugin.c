@@ -10,6 +10,13 @@
 #endif
 
 #ifdef _UCVM_AM_STATIC
+#ifdef _UCVM_ENABLE_SCPBR
+	extern int scpbr_init;
+	extern int scpbr_query;
+	extern int scpbr_finalize;
+	extern int scpbr_version;
+	extern int scpbr_config;
+#endif
 #ifdef _UCVM_ENABLE_IVLSU
 	extern int ivlsu_init;
 	extern int ivlsu_query;
@@ -259,6 +266,19 @@ int ucvm_plugin_model_init(int id, ucvm_modelconf_t *conf) {
                 pptr->model_finalize = &cvlsu_finalize;
                 pptr->model_version = &cvlsu_version;
                 pptr->model_config = &cvlsu_config;
+                if ((*pptr->model_init)(conf->config, conf->label) != 0) {
+                        fprintf(stderr, "Failed to initialize model, %s.\n", conf->label);
+                        return UCVM_CODE_ERROR;
+                }
+        }
+#endif
+#ifdef _UCVM_ENABLE_SCPBR
+        if (strcmp(conf->label, UCVM_MODEL_SCPBR) == 0) {
+                pptr->model_init = &scpbr_init;
+                pptr->model_query = &scpbr_query;
+                pptr->model_finalize = &scpbr_finalize;
+                pptr->model_version = &scpbr_version;
+                pptr->model_config = &scpbr_config;
                 if ((*pptr->model_init)(conf->config, conf->label) != 0) {
                         fprintf(stderr, "Failed to initialize model, %s.\n", conf->label);
                         return UCVM_CODE_ERROR;
