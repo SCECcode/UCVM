@@ -27,7 +27,7 @@ license: BSD-3-Clause
 repository-code: "https://github.com/SCECcode/ucvm.git"
 title: "The Unified Community Velocity Model (UCVM)"
 version: 22.7.0
-doi: 10.5281/zenodo.5651276
+doi: 10.5281/zenodo.7033687
 date-released: 2022-07-01
 contact:
   - email: software@scec.org

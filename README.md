@@ -77,9 +77,9 @@ References, citations, and acknowledgements help us obtain continued support for
 
 * Preferred Reference: Small, P., Gill, D., Maechling, P. J., Taborda, R., Callaghan, S., Jordan, T. H., Ely, G. P., Olsen, K. B., & Goulet, C. A. (2017). The SCEC Unified Community Velocity Model Software Framework. Seismological Research Letters, 88(5). doi:10.1785/0220170082
 
-* Preferred Citation: The SCEC Unified Community Velocity Model Software, Release Date: 6 November 2021, https://doi.org/10.5281/zenodo.5651277
+* Preferred Software Citation: Small, Patrick E., Maechling, Philip J., & Su, Mei-Hui. (2022). The Unified Community Velocity Model (UCVM) (22.7.0). Zenodo. https://doi.org/10.5281/zenodo.7033687
 
-* Example Acknowlegement: We would like to acknowledge the use of the SCEC Unified Community Velocity Model Software (Small 2017) in this research. 
+* Example Acknowlegement: We would like to acknowledge the use of the SCEC Unified Community Velocity Model Software (Small 2022) in this research. 
 
 Along with citing the UCVM software, researchers should also cite the appropriate publication for any of the velocity models they use in their research. Citations for individual velocity models are included in the [Credits](CREDITS.md) file in this repository, and in the GitHub repository that has been created for each model.
 
