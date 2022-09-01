@@ -8,10 +8,10 @@
                         "Abbreviation": "scpbr",
                         "Size": "2.9M",
                         "Path": "scpbr",
-                        "URL": "https://g-c662a6.a78b8.36fe.data.globus.org/ucvm/v22_7/model/scpbr.tar.gz",
+                        "URL": "https://g-c662a6.a78b8.36fe.data.globus.org/ucvm/v23_4/model/scpbr.tar.gz",
                         "Flags": "--enable-model-scpbr --with-scpbr-lib-path=lib --with-scpbr-include-path=include --with-scpbr-model-path=src",
                         "Ask": "yes",
-                        "md5sum": "98ad8687a90ebdaa9c3a9c3ba019b38b",
+                        "md5sum": "1300b8504e8e362d723cd4dda23631a8",
                         "Order": 22
                 },
                 "CVMHSMBN": {
