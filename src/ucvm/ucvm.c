@@ -578,7 +578,8 @@ int ucvm_add_user_model(ucvm_model_t *m, ucvm_modelconf_t *mconf)
 	      mconf->label);
       ucvm_num_models--;
       return(UCVM_CODE_ERROR);
-    }
+    } 
+
     break;
   default:
     break;
@@ -621,6 +622,12 @@ int ucvm_assoc_ifunc(const char *mlabel, const char *ilabel)
   if (strcmp(ilabel, UCVM_IFUNC_ELY) == 0) {
     ucvm_strcpy(ifunc.label, UCVM_IFUNC_ELY, UCVM_MAX_LABEL_LEN);
     ifunc.interp = ucvm_interp_ely;
+  } else if (strcmp(ilabel, UCVM_IFUNC_TAPER) == 0) {
+    ucvm_strcpy(ifunc.label, UCVM_IFUNC_TAPER, UCVM_MAX_LABEL_LEN);
+    ifunc.interp = ucvm_interp_taper;
+  } else if (strcmp(ilabel, UCVM_IFUNC_ELYTAPER) == 0) {
+    ucvm_strcpy(ifunc.label, UCVM_IFUNC_ELYTAPER, UCVM_MAX_LABEL_LEN);
+    ifunc.interp = ucvm_interp_elytaper;
   } else if (strcmp(ilabel, UCVM_IFUNC_CRUST) == 0) {
     ucvm_strcpy(ifunc.label, UCVM_IFUNC_CRUST, UCVM_MAX_LABEL_LEN);
     ifunc.interp = ucvm_interp_crustal;

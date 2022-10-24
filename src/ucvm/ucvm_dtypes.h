@@ -118,6 +118,8 @@
 #define UCVM_IFUNC_GTL "gtl"
 #define UCVM_IFUNC_LINEAR "linear"
 #define UCVM_IFUNC_ELY "ely"
+#define UCVM_IFUNC_TAPER "taper"
+#define UCVM_IFUNC_ELYTAPER "elytaper"
 
 
 /* Predefined projection strings */
