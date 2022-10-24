@@ -132,7 +132,6 @@ int ucvm_interp_taper(double zmin, double zmax, ucvm_ctype_t cmode,
   if(data->cmb.vs < 500) {data->cmb.vs=500; } 
   if(data->cmb.vp < 1700) {data->cmb.vp=1700; } 
   if(data->cmb.rho < 1700) {data->cmb.rho=1700; } 
-
   return(UCVM_CODE_SUCCESS);
 }
 
@@ -163,9 +162,8 @@ int ucvm_interp_elytaper(double zmin, double zmax, ucvm_ctype_t cmode,
   if (data->depth <= zmin) {
     /* Point lies fully in GTL */
     /* Check that gtl vs is defined */
-    if (data->gtl.vs <= 0.0) {
-      return(UCVM_CODE_NODATA);
-    }
+    if (data->gtl.vs <= 0.0) { return(UCVM_CODE_NODATA); }
+
     /* Apply a coefficient to convert vs30 to vs */
     data->cmb.vs = ucvm_interp_ely_a * data->gtl.vs;
     data->cmb.vp = ucvm_interp_ely_a * ucvm_brocher_vp(data->gtl.vs);
@@ -176,62 +174,60 @@ int ucvm_interp_elytaper(double zmin, double zmax, ucvm_ctype_t cmode,
     if (data->depth > taper_zmax) {
 
     /* Point lies fully in crustal */
-    data->cmb.vs = data->crust.vs;
-    data->cmb.vp = data->crust.vp;
-    data->cmb.rho = data->crust.rho;
-    data->cmb.source = UCVM_SOURCE_CRUST;
+      data->cmb.vs = data->crust.vs;
+      data->cmb.vp = data->crust.vp;
+      data->cmb.rho = data->crust.rho;
+      data->cmb.source = UCVM_SOURCE_CRUST;
 
-    } else { /* Point lies in gtl/crustal interpolation zone */
+      } else { /* Point lies in gtl/crustal interpolation zone */
 	     /* 2 regions */
-      data->cmb.source = data->gtl.source;
+        data->cmb.source = data->gtl.source;
 
       /* Check that all crust properties and gtl vs are defined */
-      if ((data->crust.vp <= 0.0) || (data->crust.vs <= 0.0) || 
-	  (data->crust.rho <= 0.0) || (data->gtl.vs <= 0.0)) {
-        return(UCVM_CODE_NODATA);
-      }
+        if ((data->crust.vp <= 0.0) || (data->crust.vs <= 0.0) || 
+	    (data->crust.rho <= 0.0) || (data->gtl.vs <= 0.0)) {
+          return(UCVM_CODE_NODATA);
+        }
 
-      z = (data->depth - zmin) / (taper_zmax - zmin);
-      f = z - pow(z, 2.0);
-      g = pow(z, 2.0) + 2*pow(z, 0.5) - 3*z;
-      double taper_data_cmb_vs = (z + ucvm_interp_ely_b*f)*(data->crust.vs) +
-        (ucvm_interp_ely_a - ucvm_interp_ely_a*z +
-         ucvm_interp_ely_c*g)*data->gtl.vs;
-      double taper_data_cmb_vp = (z + ucvm_interp_ely_b*f)*(data->crust.vp) +
-        (ucvm_interp_ely_a - ucvm_interp_ely_a*z +
-         ucvm_interp_ely_c*g)*ucvm_brocher_vp(data->gtl.vs);
-      double taper_data_cmb_rho = ucvm_nafe_drake_rho(taper_data_cmb_vp);
-
-      if(data->depth <= zmax) {
-
-        z = (data->depth - zmin) / (zmax - zmin);
+        z = (data->depth - zmin) / (taper_zmax - zmin);
         f = z - pow(z, 2.0);
         g = pow(z, 2.0) + 2*pow(z, 0.5) - 3*z;
-        data->cmb.vs = (z + ucvm_interp_ely_b*f)*(data->crust.vs) + 
-          (ucvm_interp_ely_a - ucvm_interp_ely_a*z + 
+        double taper_data_cmb_vs = (z + ucvm_interp_ely_b*f)*(data->crust.vs) +
+          (ucvm_interp_ely_a - ucvm_interp_ely_a*z +
            ucvm_interp_ely_c*g)*data->gtl.vs;
-        data->cmb.vp = (z + ucvm_interp_ely_b*f)*(data->crust.vp) + 
-          (ucvm_interp_ely_a - ucvm_interp_ely_a*z + 
+        double taper_data_cmb_vp = (z + ucvm_interp_ely_b*f)*(data->crust.vp) +
+          (ucvm_interp_ely_a - ucvm_interp_ely_a*z +
            ucvm_interp_ely_c*g)*ucvm_brocher_vp(data->gtl.vs);
-        data->cmb.rho = ucvm_nafe_drake_rho(data->cmb.vp);
-
-        if(taper_data_cmb_vs < data->cmb.vs) {
-          data->cmb.vs = taper_data_cmb_vs;
-        if(taper_data_cmb_vp < data->cmb.vp) {
-          data->cmb.vp = taper_data_cmb_vp;
-          data->cmb.rho = taper_data_cmb_rho;
+        double taper_data_cmb_rho = ucvm_nafe_drake_rho(taper_data_cmb_vp);
+  
+        if(data->depth <= zmax) {
+  
+          z = (data->depth - zmin) / (zmax - zmin);
+          f = z - pow(z, 2.0);
+          g = pow(z, 2.0) + 2*pow(z, 0.5) - 3*z;
+          data->cmb.vs = (z + ucvm_interp_ely_b*f)*(data->crust.vs) + 
+            (ucvm_interp_ely_a - ucvm_interp_ely_a*z + 
+             ucvm_interp_ely_c*g)*data->gtl.vs;
+          data->cmb.vp = (z + ucvm_interp_ely_b*f)*(data->crust.vp) + 
+            (ucvm_interp_ely_a - ucvm_interp_ely_a*z + 
+             ucvm_interp_ely_c*g)*ucvm_brocher_vp(data->gtl.vs);
+          data->cmb.rho = ucvm_nafe_drake_rho(data->cmb.vp);
+  
+          if(taper_data_cmb_vs < data->cmb.vs) { data->cmb.vs = taper_data_cmb_vs; }
+          if(taper_data_cmb_vp < data->cmb.vp) {
+            data->cmb.vp = taper_data_cmb_vp;
+            data->cmb.rho = taper_data_cmb_rho;
+          }
+          } else {
+            data->cmb.vs = taper_data_cmb_vs;
+            data->cmb.vp = taper_data_cmb_vp;
+            data->cmb.rho = taper_data_cmb_rho;
         }
-        } else {
-          data->cmb.vs = taper_data_cmb_vs;
-          data->cmb.vp = taper_data_cmb_vp;
-          data->cmb.rho = taper_data_cmb_rho;
-      }
-
-      if(data->cmb.vs < 500) { data->cmb.vs = 500;}
-      if(data->cmb.vp < 1700) { data->cmb.vp = 1700;}
-      if(data->cmb.rho < 1700) { data->cmb.rho = 1700;}
     }
   }
+  if(data->cmb.vs < 500) { data->cmb.vs = 500;}
+  if(data->cmb.vp < 1700) { data->cmb.vp = 1700;}
+  if(data->cmb.rho < 1700) { data->cmb.rho = 1700;}
   return(UCVM_CODE_SUCCESS);
 }
 
