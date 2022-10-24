@@ -217,6 +217,7 @@ int ucvm_interp_elytaper(double zmin, double zmax, ucvm_ctype_t cmode,
 
         if(taper_data_cmb_vs < data->cmb.vs) {
           data->cmb.vs = taper_data_cmb_vs;
+        if(taper_data_cmb_vp < data->cmb.vp) {
           data->cmb.vp = taper_data_cmb_vp;
           data->cmb.rho = taper_data_cmb_rho;
         }
