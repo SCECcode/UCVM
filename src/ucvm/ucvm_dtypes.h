@@ -48,6 +48,11 @@
 #define UCVM_DEFAULT_INTERP_ZMIN 0.0
 #define UCVM_DEFAULT_INTERP_ZMAX 350.0
 
+/* Default depth (m) floors for interploation */
+#define UCVM_DEFAULT_VS_FLOOR 500.0
+#define UCVM_DEFAULT_VP_FLOOR 1700.0
+#define UCVM_DEFAULT_DENSITY_FLOOR 1700.0
+
 
 /* Special source model/ifunc flags */
 #define UCVM_SOURCE_NONE -1
@@ -119,7 +124,6 @@
 #define UCVM_IFUNC_LINEAR "linear"
 #define UCVM_IFUNC_ELY "ely"
 #define UCVM_IFUNC_TAPER "taper"
-#define UCVM_IFUNC_ELYTAPER "elytaper"
 
 
 /* Predefined projection strings */
@@ -234,6 +238,7 @@ typedef struct ucvm_data_t
   double shift_cr;
   double shift_gtl;
   ucvm_prop_t crust;
+  ucvm_prop_t interp_crust;
   ucvm_prop_t gtl;
   ucvm_prop_t cmb;
 } ucvm_data_t;

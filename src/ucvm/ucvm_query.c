@@ -8,8 +8,7 @@
 /* Constants */
 #define MAX_RES_LEN 256
 #define NUM_POINTS 20000
-#define ZRANGE_MIN 0.0
-#define ZRANGE_MAX 350.0
+
 #define OUTPUT_FMT "%10.4lf %10.4lf %10.3lf %10.3lf %10.3lf %10s %10.3lf %10.3lf %10.3lf %10s %10.3lf %10.3lf %10.3lf %10s %10.3lf %10.3lf %10.3lf\n"
 
 #define JSON_OUTPUT_FMT "{ \"lon\":%.4lf,\"lat\":%.4lf,\"Z\":%.3lf,\"surf\":%.3lf,\"vs30\":%.3lf,\"crustal\":\"%s\",\"cr_vp\":%.3lf,\"cr_vs\":%.3lf,\"cr_rho\":%.3lf,\"gtl\":\"%s\",\"gtl_vp\":%.3lf,\"gtl_vs\":%.3lf,\"gtl_rho\":%.3lf,\"cmb_algo\":\"%s\",\"cmb_vp\":%.3lf,\"cmb_vs\":%.3lf,\"cmb_rho\":%.3lf }\n"
@@ -97,6 +96,7 @@ void usage() {
   printf("\t-z Optional depth range for gtl/crust interpolation.\n\n");
   printf("\t-b Optional output in json format\n\n");
   printf("\t-l Optional input lat,lon,Z(depth/elevation)\n\n");
+  printf("\t-L Optional interpolation floor limit vs,vp,density(meter in depth mode)\n\n");
   exit (0);
 }
 
@@ -115,7 +115,8 @@ void usage_detail() {
   printf("\t-v Display model version information only.\n");
   printf("\t-z Optional depth range for gtl/crust interpolation.\n\n");
   printf("\t-b Optional output in json format\n\n");
-  printf("\t-l Optional input lon,lat,Z(depth/elevation)\n\n");
+  printf("\t-l Optional input lat,lon,Z(depth/elevation)\n\n");
+  printf("\t-L Optional interpolation floor limit vs,vp,density(meter in depth mode)\n\n");
   printf("Input format is:\n");
   printf("\tlon lat Z\n\n");
   printf("Output format is:\n");
@@ -181,6 +182,7 @@ int main(int argc, char **argv)
   double zrange[2];
   double lvals[3];
   int use_cmdline=0;
+  double llvals[3];
   int dispver = 0;
 
   ucvm_ctype_t cmode;
@@ -202,11 +204,9 @@ int main(int argc, char **argv)
   snprintf(configfile, UCVM_MAX_PATH_LEN, "%s", "./ucvm.conf");
   snprintf(modellist, UCVM_MAX_MODELLIST_LEN, "%s", "1d");
   snprintf(map_label, UCVM_MAX_LABEL_LEN, "%s", UCVM_MAP_UCVM);
-  zrange[0] = ZRANGE_MIN;
-  zrange[1] = ZRANGE_MAX;
 
   /* Parse options */
-  while ((opt = getopt(argc, argv, "c:f:Hhm:p:vbz:l:")) != -1) {
+  while ((opt = getopt(argc, argv, "c:f:Hhm:p:vbz:l:L:")) != -1) {
     switch (opt) {
     case 'b':
       output_json=1;
@@ -219,6 +219,15 @@ int main(int argc, char **argv)
         exit(1);
       }
       use_cmdline=1;
+      break;
+    case 'L':  // vs,vp,density
+      if (list_parse(optarg, UCVM_MAX_PATH_LEN,
+                     llvals, 3) != UCVM_CODE_SUCCESS) {
+        fprintf(stderr, "Invalid -L vs,vp,density(m): %s.\n", optarg);
+        usage();
+        exit(1);
+      }
+      ucvm_setfloor(llvals);
       break;
     case 'c':
       if (strcmp(optarg, "gd") == 0) {
@@ -327,8 +336,8 @@ int main(int argc, char **argv)
   if (have_zrange) {
     if (ucvm_setparam(UCVM_PARAM_IFUNC_ZRANGE, 
 		      zrange[0], zrange[1]) != UCVM_CODE_SUCCESS) {
-    fprintf(stderr, "Failed to set interpolation z range\n");
-    return(1);
+      fprintf(stderr, "Failed to set interpolation z range\n");
+      return(1);
     }
   }
 

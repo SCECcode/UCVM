@@ -74,6 +74,18 @@ ucvm_config_t *ucvm_cfg = NULL;
 double ucvm_interp_zmin = UCVM_DEFAULT_INTERP_ZMIN;
 double ucvm_interp_zmax = UCVM_DEFAULT_INTERP_ZMAX;
 
+/* Taper interp floors defaults */
+double ucvm_interp_vs_floor = UCVM_DEFAULT_VS_FLOOR;
+double ucvm_interp_vp_floor = UCVM_DEFAULT_VP_FLOOR;
+double ucvm_interp_density_floor = UCVM_DEFAULT_DENSITY_FLOOR;
+
+/* Set floor */
+int ucvm_setfloor(double *llvals) {
+  ucvm_interp_vs_floor = llvals[0];
+  ucvm_interp_vp_floor = llvals[1];
+  ucvm_interp_density_floor = llvals[2];
+  return(UCVM_CODE_SUCCESS);
+}
 
 /* Get topo and vs30 values from UCVM models */
 int ucvm_get_model_vals(ucvm_point_t *pnt, ucvm_data_t *data)
@@ -625,9 +637,6 @@ int ucvm_assoc_ifunc(const char *mlabel, const char *ilabel)
   } else if (strcmp(ilabel, UCVM_IFUNC_TAPER) == 0) {
     ucvm_strcpy(ifunc.label, UCVM_IFUNC_TAPER, UCVM_MAX_LABEL_LEN);
     ifunc.interp = ucvm_interp_taper;
-  } else if (strcmp(ilabel, UCVM_IFUNC_ELYTAPER) == 0) {
-    ucvm_strcpy(ifunc.label, UCVM_IFUNC_ELYTAPER, UCVM_MAX_LABEL_LEN);
-    ifunc.interp = ucvm_interp_elytaper;
   } else if (strcmp(ilabel, UCVM_IFUNC_CRUST) == 0) {
     ucvm_strcpy(ifunc.label, UCVM_IFUNC_CRUST, UCVM_MAX_LABEL_LEN);
     ifunc.interp = ucvm_interp_crustal;
