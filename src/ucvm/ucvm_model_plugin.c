@@ -662,19 +662,20 @@ int ucvm_plugin_model_query(int id, ucvm_ctype_t cmode, int n, ucvm_point_t *pnt
           return UCVM_CODE_ERROR;
      }
 
-        /** Stores the points in in WGS84 format. */
-        /** The returned data from the plugin model. */
-        basic_point_t *ucvm_plugin_pnts_buffer = malloc(MODEL_POINT_BUFFER * sizeof(basic_point_t));
-        basic_properties_t *ucvm_plugin_data_buffer = malloc(MODEL_POINT_BUFFER * sizeof(basic_properties_t));
-	/** a shadow store for points for holding additional data **/
-        basic_point_t *ucvm_plugin_interp_pnts_buffer = malloc(MODEL_POINT_BUFFER * sizeof(basic_point_t));
+     /** Stores the points in in WGS84 format. */
+     /** The returned data from the plugin model. */
+     basic_point_t *ucvm_plugin_pnts_buffer = malloc(MODEL_POINT_BUFFER * sizeof(basic_point_t));
+     basic_properties_t *ucvm_plugin_data_buffer = malloc(MODEL_POINT_BUFFER * sizeof(basic_properties_t));
+     /** a shadow store for 1 point, 1 returned data for making ucvm_query **/
+     basic_point_t *ucvm_plugin_interp_pnts_buffer = malloc(1 * sizeof(basic_point_t));
+     basic_properties_t *ucvm_plugin_interp_data_buffer = malloc(1 * sizeof(basic_properties_t));
 
-        /** Stores the mapping between data array and query buffer array */
+     /** Stores the mapping between data array and query buffer array */
      int* index_mapping = malloc(sizeof(int)*MODEL_POINT_BUFFER);
-     if (index_mapping==NULL || ucvm_plugin_pnts_buffer == NULL || 
-		   ucvm_plugin_interp_pnts_buffer == NULL || ucvm_plugin_data_buffer == NULL) {
-          fprintf(stderr, "Memory allocation of pnts_buffer, data_buffer or index_mapping failed, aborting.\n");
-          return UCVM_CODE_ERROR;
+     if (index_mapping==NULL || ucvm_plugin_pnts_buffer == NULL || ucvm_plugin_interp_pnts_buffer == NULL || 
+		     ucvm_plugin_interp_data_buffer == NULL || ucvm_plugin_data_buffer == NULL) {
+         fprintf(stderr, "Memory allocation of pnts_buffer, data_buffer or index_mapping failed, aborting.\n");
+         return UCVM_CODE_ERROR;
      }
 
 /* setting the zmode(query by depth or elevation) 
@@ -682,10 +683,10 @@ int ucvm_plugin_model_query(int id, ucvm_ctype_t cmode, int n, ucvm_point_t *pnt
    back and so all plugin are query-by-depth,  cvmh being compiled in, passes in the original query-by-elevation
    points and let underlying code to use its own surface (digital elevation value)
 */
-        if((pptr->model_setparam != 0) && (*(pptr->model_setparam))(id, UCVM_PARAM_QUERY_MODE, cmode ) != 0) {
-                fprintf(stderr, "Failed to set query mode flag for model\n");
-                return UCVM_CODE_ERROR;
-        }
+     if((pptr->model_setparam != 0) && (*(pptr->model_setparam))(id, UCVM_PARAM_QUERY_MODE, cmode ) != 0) {
+         fprintf(stderr, "Failed to set query mode flag for model\n");
+         return UCVM_CODE_ERROR;
+     }
 
      for (i = 0; i < n; i++) {
          if ((data[i].crust.source == UCVM_SOURCE_NONE) && 
@@ -701,10 +702,20 @@ int ucvm_plugin_model_query(int id, ucvm_ctype_t cmode, int n, ucvm_point_t *pnt
               ucvm_plugin_pnts_buffer[nn].latitude = pnt[i].coord[1];
               ucvm_plugin_pnts_buffer[nn].depth = depth;
 
-              ucvm_plugin_interp_pnts_buffer[nn].longitude = pnt[i].coord[0];
-              ucvm_plugin_interp_pnts_buffer[nn].latitude = pnt[i].coord[1];
-              ucvm_plugin_interp_pnts_buffer[nn].depth = data[i].depth; // using original depth
-
+	      // need to make a separate query using original depth
+	      if(data[i].domain == UCVM_DOMAIN_INTERP) {
+                  ucvm_plugin_interp_pnts_buffer[0].longitude = pnt[i].coord[0];
+                  ucvm_plugin_interp_pnts_buffer[0].latitude = pnt[i].coord[1];
+                  ucvm_plugin_interp_pnts_buffer[0].depth = data[i].depth; 
+                  (*(pptr->model_query))(ucvm_plugin_interp_pnts_buffer, ucvm_plugin_interp_data_buffer, 1);
+                       // Transfer our findings.
+                       if (ucvm_plugin_interp_data_buffer[0].vp >= 0 && ucvm_plugin_interp_data_buffer[0].vs >= 0 
+					         && ucvm_plugin_interp_data_buffer[0].rho >= 0) {
+                           data[i].interp_crust.vp = ucvm_plugin_interp_data_buffer[0].vp;
+                           data[i].interp_crust.vs = ucvm_plugin_interp_data_buffer[0].vs;
+                           data[i].interp_crust.rho = ucvm_plugin_interp_data_buffer[0].rho;
+                       }
+              }		       
               nn++;
 
               if (nn == MODEL_POINT_BUFFER || i == n - 1) {
@@ -723,19 +734,6 @@ int ucvm_plugin_model_query(int id, ucvm_ctype_t cmode, int n, ucvm_point_t *pnt
                                  datagap = 1;
                         }
                    }
-		   // Also want the data from unshifted depth 
-		   if(data[i].domain == UCVM_DOMAIN_INTERP) {
-                       (*(pptr->model_query))(ucvm_plugin_interp_pnts_buffer, ucvm_plugin_data_buffer, nn);
-                       // Transfer our findings.
-                       for (j = 0; j < nn; j++) {
-                            if (ucvm_plugin_data_buffer[j].vp >= 0 && ucvm_plugin_data_buffer[j].vs >= 0 
-					         && ucvm_plugin_data_buffer[j].rho >= 0) {
-                                data[index_mapping[j]].interp_crust.vp = ucvm_plugin_data_buffer[j].vp;
-                                data[index_mapping[j]].interp_crust.vs = ucvm_plugin_data_buffer[j].vs;
-                                data[index_mapping[j]].interp_crust.rho = ucvm_plugin_data_buffer[j].rho;
-                            }
-                       }
-                   }
 
                    // After query, reset nn.
                    nn = 0;
@@ -747,7 +745,6 @@ int ucvm_plugin_model_query(int id, ucvm_ctype_t cmode, int n, ucvm_point_t *pnt
      }
         /* catch the last bits of partial chunk */
      if(nn != 0) {
-
          (*(pptr->model_query))(ucvm_plugin_pnts_buffer, ucvm_plugin_data_buffer, nn);
          // Transfer our findings.
          for (j = 0; j < nn; j++) {
@@ -761,23 +758,13 @@ int ucvm_plugin_model_query(int id, ucvm_ctype_t cmode, int n, ucvm_point_t *pnt
                       datagap = 1;
               }
          } 
-	 if(data[i].domain == UCVM_DOMAIN_INTERP) {
-             (*(pptr->model_query))(ucvm_plugin_interp_pnts_buffer, ucvm_plugin_data_buffer, nn);
-             for (j = 0; j < nn; j++) {
-                  if (ucvm_plugin_data_buffer[j].vp >= 0 && ucvm_plugin_data_buffer[j].vs >= 0 
-				  && ucvm_plugin_data_buffer[j].rho >= 0) {
-                      data[index_mapping[j]].interp_crust.vp = ucvm_plugin_data_buffer[j].vp;
-                      data[index_mapping[j]].interp_crust.vs = ucvm_plugin_data_buffer[j].vs;
-                      data[index_mapping[j]].interp_crust.rho = ucvm_plugin_data_buffer[j].rho;
-                  }
-             } 
-         }
      }
 
      free(index_mapping);
      free(ucvm_plugin_data_buffer);
      free(ucvm_plugin_pnts_buffer);
      free(ucvm_plugin_interp_pnts_buffer);
+     free(ucvm_plugin_interp_data_buffer);
 
      if (datagap == 1) { return UCVM_CODE_DATAGAP; }
 

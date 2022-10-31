@@ -19,8 +19,6 @@ int ucvm_interp_ely(double zmin, double zmax, ucvm_ctype_t cmode,
 {
   double z, f, g;
 
-//FILE *logfp=fopen("elog","a+");
-
   switch (cmode) {
   case UCVM_COORD_GEO_DEPTH:
   case UCVM_COORD_GEO_ELEV:
@@ -72,10 +70,8 @@ int ucvm_interp_ely(double zmin, double zmax, ucvm_ctype_t cmode,
       (ucvm_interp_ely_a - ucvm_interp_ely_a*z + 
        ucvm_interp_ely_c*g)*ucvm_brocher_vp(data->gtl.vs);
     data->cmb.rho = ucvm_nafe_drake_rho(data->cmb.vp);
-//    fprintf(logfp," %f ely: -- crust at %f, ely at %f\n",data->depth, data->crust.vs, data->cmb.vs);
   }
 
-//  fclose(logfp);
 
   return(UCVM_CODE_SUCCESS);
 }
@@ -85,8 +81,6 @@ int ucvm_interp_taper(double zmin, double zmax, ucvm_ctype_t cmode,
 		    ucvm_point_t *pnt, ucvm_data_t *data)
 {
   double z, f, g;
-
-//FILE *logfp=fopen("tlog","a+");
 
   switch (cmode) {
   case UCVM_COORD_GEO_DEPTH:
@@ -140,15 +134,11 @@ int ucvm_interp_taper(double zmin, double zmax, ucvm_ctype_t cmode,
        ucvm_interp_ely_c*g)*ucvm_brocher_vp(data->gtl.vs);
     double taper_data_cmb_rho = ucvm_nafe_drake_rho(taper_data_cmb_vp);
 
-//  fprintf(logfp," %f taper: -- crust at %f, taper at %f\n",data->depth, data->crust.vs, taper_data_cmb_vs);
-
     if(data->interp_crust.vs < taper_data_cmb_vs) {
-//  fprintf(logfp,"         -- go crust at %f\n",data->depth);
       data->cmb.vs = data->interp_crust.vs;
       data->cmb.vp = data->interp_crust.vp;
       data->cmb.rho = data->interp_crust.rho;
       } else {
-//  fprintf(logfp,"         -- go taper at %f\n",data->depth);
         data->cmb.vs = taper_data_cmb_vs;
         data->cmb.vp = taper_data_cmb_vp;
         data->cmb.rho = taper_data_cmb_rho;
@@ -156,12 +146,9 @@ int ucvm_interp_taper(double zmin, double zmax, ucvm_ctype_t cmode,
 
   }
 
-//  if(data->cmb.vs < ucvm_interp_vs_floor) {data->cmb.vs= ucvm_interp_vs_floor ; }
-//  if(data->cmb.vp < ucvm_interp_vp_floor) { data->cmb.vp= ucvm_interp_vp_floor ; }
-//  if(data->cmb.rho < ucvm_interp_density_floor) { data->cmb.rho= ucvm_interp_density_floor ; }
-
-//  fprintf(logfp,"  >>  final vs is %f \n", data->cmb.vs);
-//  fclose(logfp);
+  if(data->cmb.vs < ucvm_interp_vs_floor) {data->cmb.vs= ucvm_interp_vs_floor ; }
+  if(data->cmb.vp < ucvm_interp_vp_floor) { data->cmb.vp= ucvm_interp_vp_floor ; }
+  if(data->cmb.rho < ucvm_interp_density_floor) { data->cmb.rho= ucvm_interp_density_floor ; }
 
   return(UCVM_CODE_SUCCESS);
 }
