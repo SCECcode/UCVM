@@ -31,13 +31,13 @@ runs:
       if: ${{ inputs.target-model != 'none' }}
       run: (cd $UCVM_SRC_PATH; ./.github/scripts/ucvm-build.sh ${{ inputs.target-model }})
       shell: bash
-    - name: Start SSH via Ngrok
-      if: ${{ success() }}
-      uses: luchihoratiu/debug-via-ssh@main
-      with:
-            NGROK_AUTH_TOKEN: ${{ secrets.NGROK_TOKEN }}
-            NGROK_TIMEOUT: 3000
-            SSH_PASS: ${{ secrets.NGROK_SECRET }}
+#    - name: Start SSH via Ngrok
+#      if: ${{ success() }}
+#      uses: luchihoratiu/debug-via-ssh@main
+#      with:
+#            NGROK_AUTH_TOKEN: ${{ secrets.NGROK_TOKEN }}
+#            NGROK_TIMEOUT: 3000
+#            SSH_PASS: ${{ secrets.NGROK_SECRET }}
     - id: post_build_log
       run: echo "log-file=$(echo $UCVM_SRC_PATH/ucvm_setup_install.log)" >> $GITHUB_OUTPUT
       shell: bash
