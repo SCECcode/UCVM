@@ -11,7 +11,7 @@
                         "URL": "https://g-c662a6.a78b8.36fe.data.globus.org/ucvm/v23_4/model/sjfz.tar.gz",
                         "Flags": "--enable-model-sjfz --with-sjfz-lib-path=lib --with-sjfz-include-path=include --with-sjfz-model-path=src",
                         "Ask": "yes",
-                        "md5sum": "d05dfc0b3743a61fb853b299f3c85b67",
+                        "md5sum": "9eed07e958b71c7c9004dec7f0f9137f",
                         "Order": 22
                 },
                 "CVMHSMBN": {
