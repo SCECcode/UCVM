@@ -10,12 +10,12 @@
 #endif
 
 #ifdef _UCVM_AM_STATIC
-#ifdef _UCVM_ENABLE_SCPBR
-     extern int scpbr_init;
-     extern int scpbr_query;
-     extern int scpbr_finalize;
-     extern int scpbr_version;
-     extern int scpbr_config;
+#ifdef _UCVM_ENABLE_SJFZ
+     extern int sjfz_init;
+     extern int sjfz_query;
+     extern int sjfz_finalize;
+     extern int sjfz_version;
+     extern int sjfz_config;
 #endif
 #ifdef _UCVM_ENABLE_IVLSU
      extern int ivlsu_init;
@@ -272,13 +272,13 @@ int ucvm_plugin_model_init(int id, ucvm_modelconf_t *conf) {
                 }
         }
 #endif
-#ifdef _UCVM_ENABLE_SCPBR
-        if (strcmp(conf->label, UCVM_MODEL_SCPBR) == 0) {
-                pptr->model_init = &scpbr_init;
-                pptr->model_query = &scpbr_query;
-                pptr->model_finalize = &scpbr_finalize;
-                pptr->model_version = &scpbr_version;
-                pptr->model_config = &scpbr_config;
+#ifdef _UCVM_ENABLE_SJFZ
+        if (strcmp(conf->label, UCVM_MODEL_SJFZ) == 0) {
+                pptr->model_init = &sjfz_init;
+                pptr->model_query = &sjfz_query;
+                pptr->model_finalize = &sjfz_finalize;
+                pptr->model_version = &sjfz_version;
+                pptr->model_config = &sjfz_config;
                 if ((*pptr->model_init)(conf->config, conf->label) != 0) {
                         fprintf(stderr, "Failed to initialize model, %s.\n", conf->label);
                         return UCVM_CODE_ERROR;

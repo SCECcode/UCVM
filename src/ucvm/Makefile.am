@@ -27,9 +27,9 @@ AM_CFLAGS += -D_UCVM_ENABLE_CVMH
 MODEL_TARGS += ucvm_model_cvmh.o
 endif
 
-# SCPBR includes
-if UCVM_AM_ENABLE_SCPBR
-AM_CFLAGS += -D_UCVM_ENABLE_SCPBR
+# SJFZ includes
+if UCVM_AM_ENABLE_SJFZ
+AM_CFLAGS += -D_UCVM_ENABLE_SJFZ
 endif
 
 # IVLSU includes
