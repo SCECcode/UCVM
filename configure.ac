@@ -73,11 +73,11 @@ AC_ARG_ENABLE([model-cvms],
         [enable_model_cvms=yes],
         [enable_model_cvms=no])
 
-AC_ARG_ENABLE([model-scpbr],
-        [AS_HELP_STRING([--enable-model-scpbr],
-        [enable model SCEC SCPBR])],
-        [enable_model_scpbr=yes],
-        [enable_model_scpbr=no])
+AC_ARG_ENABLE([model-sjfz],
+        [AS_HELP_STRING([--enable-model-sjfz],
+        [enable model SCEC SJFZ])],
+        [enable_model_sjfz=yes],
+        [enable_model_fjfz=no])
 
 AC_ARG_ENABLE([model-ivlsu],
         [AS_HELP_STRING([--enable-model-ivlsu],
@@ -342,17 +342,17 @@ AC_ARG_WITH([cvmsi-model-path],
   [CVMS_MODEL="/usr/cvmsi/src"])
 fi
 
-# Get SCEC SCPBR library and include locations
-if test "x$enable_model_scpbr" = xyes; then
-AC_ARG_WITH([scpbr-include-path],
-  [AS_HELP_STRING([--with-scpbr-include-path],
-    [location of the SCEC SCPBR headers])],
-  [SCPBR_INCL="-I$withval"],
-  [SCPBR_INCL="/usr/include/scpbr"])
-AC_ARG_WITH([scpbr-lib-path],
-  [AS_HELP_STRING([--with-scpbr-lib-path], [location of the SCEC SCPBR libraries])],
-  [SCPBR_LIB="-L$withval -lscpbr"],
-  [SCPBR_LIB="-lscpbr"])
+# Get SCEC SJFZ library and include locations
+if test "x$enable_model_sjfz" = xyes; then
+AC_ARG_WITH([sjfz-include-path],
+  [AS_HELP_STRING([--with-sjfz-include-path],
+    [location of the SCEC SJFZ headers])],
+  [SJFZ_INCL="-I$withval"],
+  [SJFZ_INCL="/usr/include/sjfz"])
+AC_ARG_WITH([sjfz-lib-path],
+  [AS_HELP_STRING([--with-sjfz-lib-path], [location of the SCEC SJFZ libraries])],
+  [SJFZ_LIB="-L$withval -lsjfz"],
+  [SJFZ_LIB="-lsjfz"])
 fi
 
 # Get SCEC IMPERIAL library and include locations
@@ -839,21 +839,21 @@ else
     AM_CONDITIONAL(UCVM_AM_ENABLE_CVMSI, [test x"$enable_model_cvmsi" = xyes])
 fi
 
-# Check optional SCEC SCPBR installation
+# Check optional SCEC SJFZ installation
 if test "x$enable_static" = xyes; then
-if test "x$enable_model_scpbr" = xyes; then
+if test "x$enable_model_sjfz" = xyes; then
    # Setup compiler/linker flags
-   CFLAGS="$SCPBR_INCL $CFLAGS"
-   LDFLAGS="$SCPBR_LIB $LDFLAGS"
+   CFLAGS="$SJFZ_INCL $CFLAGS"
+   LDFLAGS="$SJFZ_LIB $LDFLAGS"
 
-   echo "Checking for SCEC SCPBR"
-   AC_CHECK_LIB(scpbr, ivlsu_init,[AM_CONDITIONAL(UCVM_AM_ENABLE_SCPBR, true)], [AC_MSG_ERROR(["SCEC SCPBR library not found; use --with-scpbr-lib-path"])],[-lm])
-   AC_CHECK_HEADER(scpbr.h,[],[AC_MSG_ERROR(["SCEC SCPBR header not found; use --with-scpbr-include-path"])],[AC_INCLUDES_DEFAULT])
+   echo "Checking for SCEC SJFZ"
+   AC_CHECK_LIB(sjfz, sjfz_init,[AM_CONDITIONAL(UCVM_AM_ENABLE_SJFZ, true)], [AC_MSG_ERROR(["SCEC SJFZ library not found; use --with-sjfz-lib-path"])],[-lm])
+   AC_CHECK_HEADER(sjfz.h,[],[AC_MSG_ERROR(["SCEC SJFZ header not found; use --with-sjfz-include-path"])],[AC_INCLUDES_DEFAULT])
 else
-   AM_CONDITIONAL(UCVM_AM_ENABLE_SCPBR, false)
+   AM_CONDITIONAL(UCVM_AM_ENABLE_SJFZ, false)
 fi
 else
-   AM_CONDITIONAL(UCVM_AM_ENABLE_SCPBR, [test x"$enable_model_scpbr" = xyes])
+   AM_CONDITIONAL(UCVM_AM_ENABLE_SJFZ, [test x"$enable_model_sjfz" = xyes])
 fi
 
 # Check optional SCEC IMPERIAL installation

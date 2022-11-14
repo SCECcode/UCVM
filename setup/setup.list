@@ -3,13 +3,13 @@
                "Version": "22.7"
                },
 	"models": {
-               "SCPBR": {
+               "SJfZ": {
                         "Version": "1.0",
-                        "Abbreviation": "scpbr",
+                        "Abbreviation": "sjfz",
                         "Size": "2.9M",
-                        "Path": "scpbr",
-                        "URL": "https://g-c662a6.a78b8.36fe.data.globus.org/ucvm/v23_4/model/scpbr.tar.gz",
-                        "Flags": "--enable-model-scpbr --with-scpbr-lib-path=lib --with-scpbr-include-path=include --with-scpbr-model-path=src",
+                        "Path": "sjfz",
+                        "URL": "https://g-c662a6.a78b8.36fe.data.globus.org/ucvm/v23_4/model/sjfz.tar.gz",
+                        "Flags": "--enable-model-sjfz --with-sjfz-lib-path=lib --with-sjfz-include-path=include --with-sjfz-model-path=src",
                         "Ask": "yes",
                         "md5sum": "d05dfc0b3743a61fb853b299f3c85b67",
                         "Order": 22
