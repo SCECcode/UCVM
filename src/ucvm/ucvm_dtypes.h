@@ -52,6 +52,7 @@
 #define UCVM_DEFAULT_VS_FLOOR 500.0
 #define UCVM_DEFAULT_VP_FLOOR 1700.0
 #define UCVM_DEFAULT_DENSITY_FLOOR 1700.0
+#define UCVM_DEFAULT_NULL_FLOOR -1
 
 
 /* Special source model/ifunc flags */

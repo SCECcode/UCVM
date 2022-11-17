@@ -1,5 +1,6 @@
-## Current
-* Added SCPBR
+## 22022-11-15 Mei-Hui  Su <mei@usc.edu>
+* Added San Jacinto Fault Zone Velocity Model 
+* Added ely-tapering interpolation 
 
 ## 2022-07-01 Mei-Hui Su <mei@usc.edu>
 * CVMS,CVMS5,CVMSI,WFCFM are all dynamically loadable models, ucvm#39

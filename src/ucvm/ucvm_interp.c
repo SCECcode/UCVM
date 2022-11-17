@@ -146,9 +146,15 @@ int ucvm_interp_taper(double zmin, double zmax, ucvm_ctype_t cmode,
 
   }
 
-  if(data->cmb.vs < ucvm_interp_vs_floor) {data->cmb.vs= ucvm_interp_vs_floor ; }
-  if(data->cmb.vp < ucvm_interp_vp_floor) { data->cmb.vp= ucvm_interp_vp_floor ; }
-  if(data->cmb.rho < ucvm_interp_density_floor) { data->cmb.rho= ucvm_interp_density_floor ; }
+  if(ucvm_interp_vs_floor != UCVM_DEFAULT_NULL_FLOOR && 
+		  data->cmb.vs < ucvm_interp_vs_floor) 
+    {data->cmb.vs= ucvm_interp_vs_floor ; }
+  if(ucvm_interp_vp_floor != UCVM_DEFAULT_NULL_FLOOR && 
+		  data->cmb.vp < ucvm_interp_vp_floor)
+    { data->cmb.vp= ucvm_interp_vp_floor ; }
+  if(ucvm_interp_density_floor != UCVM_DEFAULT_NULL_FLOOR && 
+		  data->cmb.rho < ucvm_interp_density_floor) 
+    { data->cmb.rho= ucvm_interp_density_floor ; }
 
   return(UCVM_CODE_SUCCESS);
 }
