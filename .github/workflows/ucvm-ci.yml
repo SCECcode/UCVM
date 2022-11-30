@@ -2,7 +2,7 @@ name: ucvm-ci
 
 on:
   push:
-    branches: [ main ]
+    branches: [ withSCPBR ]
 
 jobs:
   ucvm-build-cvmh:
