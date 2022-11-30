@@ -45,7 +45,7 @@ jobs:
     - name: checkout ucvm toPython3
       uses: actions/checkout@v2
     - name: build ucvm with cvms and cvmh
-      run: ./.github/scripts/ucvm-build.sh "cvms,cvmh"
+      run: ./.github/scripts/ucvm-build.sh "ccc,cvms,cvmh"
       shell: bash
     - name: test ucvm with cvms and cvmh
       run: ./.github/scripts/ucvm-test.sh
