@@ -20,7 +20,7 @@ jobs:
       with: 
         ref: main
     - name: build ucvm with cvmh
-      run: ./.github/scripts/ucvm-build.sh "cvmhhh"
+      run: ./.github/scripts/ucvm-build.sh "cccvmhhh"
       shell: bash
     - name: test ucvm with cvmh
       run: ./.github/scripts/ucvm-test.sh
