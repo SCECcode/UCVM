@@ -41,7 +41,7 @@ cat > $expect << EOF_EXPECTED_RESULT
 0010100000000103400000000000000000000000000164000002024
 EOF_EXPECTED_RESULT
 
-echo "Running examples_programs_ucvm2etree ucvm2etree_cvmh"
+echo "Running examples_programs_etree ucvm2etree_cvmh"
 if diff $result $expect > /dev/null 2>&1
 then
   echo [SUCCESS]
