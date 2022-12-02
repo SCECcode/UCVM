@@ -1,7 +1,7 @@
 ############################################
 # Special build targets
 ############################################
-SUBDIRS = api programs/basin programs/ucvm programs/etree programs/mesh
+SUBDIRS = api programs/basin programs/ucvm programs/etree programs/mesh programs/surface
 
 install:
 	mkdir -p ${prefix}/tests
