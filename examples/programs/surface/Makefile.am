@@ -3,7 +3,7 @@
 #
 bin_PROGRAMS=
 
-if UCVM_AM_ENABLE_CVM5
+if UCVM_AM_ENABLE_CVMS5
 bin_PROGRAMS += run_ucvm2surface_cvms5.sh
 run_ucvm2surface_cvms5_sh_SOURCES = run_ucvm2surface_cvms5.sh
 bin_PROGRAMS += run_ucvm2surface_cvms5.sh
