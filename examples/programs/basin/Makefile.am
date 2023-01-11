@@ -14,6 +14,10 @@ if UCVM_HAVE_MPI
 if UCVM_AM_ENABLE_CVMS5
 bin_PROGRAMS += run_basin_query_mpi_cvms5.sh
 run_basin_query_mpi_cvms5_sh_SOURCES = run_basin_query_mpi_cvms5.sh
+bin_PROGRAMS += run_basin_query_mpi_complete_cvms5_taper.sh 
+run_basin_query_mpi_complete_cvms5_taper_sh_SOURCES = run_basin_query_mpi_complete_cvms5_taper.sh 
+bin_PROGRAMS += run_basin_query_mpi_cvms5_taper.sh
+run_basin_query_mpi_cvms5_taper_sh_SOURCES = run_basin_query_mpi_cvms5_taper.sh
 endif
 
 if UCVM_AM_ENABLE_CENCAL
