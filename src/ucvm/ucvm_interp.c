@@ -82,6 +82,10 @@ int ucvm_interp_taper(double zmin, double zmax, ucvm_ctype_t cmode,
 {
   double z, f, g;
 
+  // This is a HACK!!
+  double save_zmax=zmax;
+  zmax=700;
+ 
   switch (cmode) {
   case UCVM_COORD_GEO_DEPTH:
   case UCVM_COORD_GEO_ELEV:
