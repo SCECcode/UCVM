@@ -79,7 +79,7 @@ double ucvm_interp_vs_floor = UCVM_DEFAULT_VS_FLOOR;
 double ucvm_interp_vp_floor = UCVM_DEFAULT_VP_FLOOR;
 double ucvm_interp_density_floor = UCVM_DEFAULT_DENSITY_FLOOR;
 
-/* Set floor */
+/* Set floor, only if it is not -1 */
 int ucvm_setfloor(double *llvals) {
   ucvm_interp_vs_floor = llvals[0];
   ucvm_interp_vp_floor = llvals[1];
@@ -637,6 +637,8 @@ int ucvm_assoc_ifunc(const char *mlabel, const char *ilabel)
   } else if (strcmp(ilabel, UCVM_IFUNC_TAPER) == 0) {
     ucvm_strcpy(ifunc.label, UCVM_IFUNC_TAPER, UCVM_MAX_LABEL_LEN);
     ifunc.interp = ucvm_interp_taper;
+    // need to reset the zrange	     
+    ucvm_setparam(UCVM_PARAM_IFUNC_ZRANGE, 0.0, 700.0);
   } else if (strcmp(ilabel, UCVM_IFUNC_CRUST) == 0) {
     ucvm_strcpy(ifunc.label, UCVM_IFUNC_CRUST, UCVM_MAX_LABEL_LEN);
     ifunc.interp = ucvm_interp_crustal;
@@ -973,6 +975,10 @@ int ucvm_query(int n, ucvm_point_t *pnt, ucvm_data_t *data)
     data[i].crust.vp = 0.0;
     data[i].crust.vs = 0.0;
     data[i].crust.rho = 0.0;
+    // special for taper 
+    data[i].interp_crust.vp = 0.0;
+    data[i].interp_crust.vs = 0.0;
+    data[i].interp_crust.rho = 0.0;
     data[i].gtl.source = UCVM_SOURCE_NONE;
     data[i].gtl.vp = 0.0;
     data[i].gtl.vs = 0.0;

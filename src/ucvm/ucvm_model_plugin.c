@@ -707,6 +707,7 @@ int ucvm_plugin_model_query(int id, ucvm_ctype_t cmode, int n, ucvm_point_t *pnt
                   ucvm_plugin_interp_pnts_buffer[0].longitude = pnt[i].coord[0];
                   ucvm_plugin_interp_pnts_buffer[0].latitude = pnt[i].coord[1];
                   ucvm_plugin_interp_pnts_buffer[0].depth = data[i].depth; 
+//fprintf(stderr,"XXX -- crustal with depth of %lf\n", data[i].depth);
                   (*(pptr->model_query))(ucvm_plugin_interp_pnts_buffer, ucvm_plugin_interp_data_buffer, 1);
                        // Transfer our findings.
                        if (ucvm_plugin_interp_data_buffer[0].vp >= 0 && ucvm_plugin_interp_data_buffer[0].vs >= 0 

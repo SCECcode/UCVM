@@ -13,6 +13,12 @@ extern double ucvm_interp_vs_floor;
 extern double ucvm_interp_vp_floor;
 extern double ucvm_interp_density_floor;
 
+int JUST_TAPER=0;
+int taper_cnt=0;
+int taper_same_cnt=0;
+int taper_less_cnt=0;
+int taper_more_cnt=0;
+
 /* Ely interpolation method */
 int ucvm_interp_ely(double zmin, double zmax, ucvm_ctype_t cmode,
 		    ucvm_point_t *pnt, ucvm_data_t *data)
@@ -81,11 +87,8 @@ int ucvm_interp_taper(double zmin, double zmax, ucvm_ctype_t cmode,
 		    ucvm_point_t *pnt, ucvm_data_t *data)
 {
   double z, f, g;
+//  fprintf(stderr,"XXX callin interp for data depth %lf\n", data->depth);
 
-  // This is a HACK!!
-  double save_zmax=zmax;
-  zmax=700;
- 
   switch (cmode) {
   case UCVM_COORD_GEO_DEPTH:
   case UCVM_COORD_GEO_ELEV:
@@ -138,6 +141,24 @@ int ucvm_interp_taper(double zmin, double zmax, ucvm_ctype_t cmode,
        ucvm_interp_ely_c*g)*ucvm_brocher_vp(data->gtl.vs);
     double taper_data_cmb_rho = ucvm_nafe_drake_rho(taper_data_cmb_vp);
 
+
+/*
+    taper_cnt=taper_cnt+1;
+
+    if(data->interp_crust.vs == taper_data_cmb_vs)
+      taper_same_cnt = taper_same_cnt+1;
+
+    if(data->interp_crust.vs > taper_data_cmb_vs) {
+      taper_more_cnt = taper_more_cnt+1;
+    }
+    if(data->interp_crust.vs < taper_data_cmb_vs) {
+      taper_less_cnt=taper_less_cnt+1;
+    }
+*/
+
+
+//fprintf(stderr,"XXX crust/taper %lf > %lf \n", data->interp_crust.vs , taper_data_cmb_vs);
+
     if(data->interp_crust.vs < taper_data_cmb_vs) {
       data->cmb.vs = data->interp_crust.vs;
       data->cmb.vp = data->interp_crust.vp;
@@ -148,7 +169,14 @@ int ucvm_interp_taper(double zmin, double zmax, ucvm_ctype_t cmode,
         data->cmb.rho = taper_data_cmb_rho;
     }
 
+    if(JUST_TAPER) {
+        data->cmb.vs = taper_data_cmb_vs;
+        data->cmb.vp = taper_data_cmb_vp;
+        data->cmb.rho = taper_data_cmb_rho;
+    }
+
   }
+//fprintf(stderr,"XXX cnt %ld less %ld more %ld same %ld \n", taper_cnt, taper_less_cnt, taper_more_cnt, taper_same_cnt);
 
   if(ucvm_interp_vs_floor != UCVM_DEFAULT_NULL_FLOOR && 
 		  data->cmb.vs < ucvm_interp_vs_floor) 
