@@ -187,6 +187,8 @@ int ucvm_interp_taper(double zmin, double zmax, ucvm_ctype_t cmode,
   if(ucvm_interp_density_floor != UCVM_DEFAULT_NULL_FLOOR && 
 		  data->cmb.rho < ucvm_interp_density_floor) 
     { data->cmb.rho= ucvm_interp_density_floor ; }
+  if( (data->cmb.vp / data->cmb.vs) < 1.45)
+    { data->cmb.vs= data->cmb.vp/1.45; }
 
   return(UCVM_CODE_SUCCESS);
 }
