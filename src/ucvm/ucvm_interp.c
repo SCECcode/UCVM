@@ -14,10 +14,10 @@ extern double ucvm_interp_vp_floor;
 extern double ucvm_interp_density_floor;
 
 int JUST_TAPER=0;
-int taper_cnt=0;
-int taper_same_cnt=0;
-int taper_less_cnt=0;
-int taper_more_cnt=0;
+int taper1_cnt=0;
+int taper2_cnt=0;
+int taper3_cnt=0;
+int taper4_cnt=0;
 
 /* Ely interpolation method */
 int ucvm_interp_ely(double zmin, double zmax, ucvm_ctype_t cmode,
@@ -142,21 +142,6 @@ int ucvm_interp_taper(double zmin, double zmax, ucvm_ctype_t cmode,
     double taper_data_cmb_rho = ucvm_nafe_drake_rho(taper_data_cmb_vp);
 
 
-/*
-    taper_cnt=taper_cnt+1;
-
-    if(data->interp_crust.vs == taper_data_cmb_vs)
-      taper_same_cnt = taper_same_cnt+1;
-
-    if(data->interp_crust.vs > taper_data_cmb_vs) {
-      taper_more_cnt = taper_more_cnt+1;
-    }
-    if(data->interp_crust.vs < taper_data_cmb_vs) {
-      taper_less_cnt=taper_less_cnt+1;
-    }
-*/
-
-
 //fprintf(stderr,"XXX crust/taper %lf > %lf \n", data->interp_crust.vs , taper_data_cmb_vs);
 
     if(data->interp_crust.vs < taper_data_cmb_vs) {
@@ -176,19 +161,42 @@ int ucvm_interp_taper(double zmin, double zmax, ucvm_ctype_t cmode,
     }
 
   }
-//fprintf(stderr,"XXX cnt %ld less %ld more %ld same %ld \n", taper_cnt, taper_less_cnt, taper_more_cnt, taper_same_cnt);
 
+  double ratio = data->cmb.vp / data->cmb.vs;
   if(ucvm_interp_vs_floor != UCVM_DEFAULT_NULL_FLOOR && 
 		  data->cmb.vs < ucvm_interp_vs_floor) 
-    {data->cmb.vs= ucvm_interp_vs_floor ; }
+    {  data->cmb.vs= ucvm_interp_vs_floor ; }
   if(ucvm_interp_vp_floor != UCVM_DEFAULT_NULL_FLOOR && 
 		  data->cmb.vp < ucvm_interp_vp_floor)
     { data->cmb.vp= ucvm_interp_vp_floor ; }
   if(ucvm_interp_density_floor != UCVM_DEFAULT_NULL_FLOOR && 
 		  data->cmb.rho < ucvm_interp_density_floor) 
     { data->cmb.rho= ucvm_interp_density_floor ; }
+
+  if( ratio < 1.45 )
+    { taper1_cnt=taper1_cnt+1; } 
+
   if( (data->cmb.vp / data->cmb.vs) < 1.45)
-    { data->cmb.vs= data->cmb.vp/1.45; }
+    { data->cmb.vs= data->cmb.vp/1.45;
+      taper2_cnt=taper2_cnt+1; 
+    }
+
+  if( data->cmb.vs < 500.0)
+    {
+      ratio = data->cmb.vp / data->cmb.vs;
+      taper3_cnt=taper3_cnt+1; 
+      data->cmb.vs=500;
+      data->cmb.vp= data->cmb.vs * ( ratio );
+    }
+  if(ucvm_interp_vp_floor != UCVM_DEFAULT_NULL_FLOOR && 
+		  data->cmb.vp < ucvm_interp_vp_floor)
+    { 
+       taper4_cnt=taper4_cnt+1;
+       data->cmb.vp= ucvm_interp_vp_floor ; 
+    }
+
+fprintf(stderr,"XXX 1 %d 2 %d 3 %d 4 %d \n", taper1_cnt, taper2_cnt, taper3_cnt, taper4_cnt);
+
 
   return(UCVM_CODE_SUCCESS);
 }
