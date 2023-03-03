@@ -195,7 +195,7 @@ int ucvm_interp_taper(double zmin, double zmax, ucvm_ctype_t cmode,
        data->cmb.vp= ucvm_interp_vp_floor ; 
     }
 
-fprintf(stderr,"XXX 1 %d 2 %d 3 %d 4 %d \n", taper1_cnt, taper2_cnt, taper3_cnt, taper4_cnt);
+fprintf(stderr,"XXX 1(%d) 2(%d) 3(%d) 4(%d) \n", taper1_cnt, taper2_cnt, taper3_cnt, taper4_cnt);
 
 
   return(UCVM_CODE_SUCCESS);
