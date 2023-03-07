@@ -353,6 +353,10 @@ AC_ARG_WITH([sjfz-lib-path],
   [AS_HELP_STRING([--with-sjfz-lib-path], [location of the SCEC SJFZ libraries])],
   [SJFZ_LIB="-L$withval -lsjfz"],
   [SJFZ_LIB="-lsjfz"])
+AC_ARG_WITH([sjfz-model-path],
+  [AS_HELP_STRING([--with-sjfz-model-path], [location of the SJFZ model files])],
+  [CVMS_MODEL="$withval"],
+  [CVMS_MODEL="/usr/sjfz/src"])
 fi
 
 # Get SCEC IMPERIAL library and include locations
