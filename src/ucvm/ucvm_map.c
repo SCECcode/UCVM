@@ -21,14 +21,16 @@ ucvm_map_t map[UCVM_MAX_MAPS];
 ucvm_map_t *MAPPTR = NULL;
 
 void _ucvm_map_setup() {
-   for(int i=0; i<UCVM_MAX_MAPS; i++) {
+   int i;
+   for(i=0; i<UCVM_MAX_MAPS; i++) {
      map[i].map_is_initialized = 0;
      map[i].map_label_str[0]= '\0';
    }
 }
 
 void _ucvm_map_teardown() {
-   for(int i=0; i<UCVM_MAX_MAPS; i++) {
+   int i;
+   for(i=0; i<UCVM_MAX_MAPS; i++) {
      map[i].map_is_initialized = 0;
      if(strlen(map[i].map_label_str)!=0) {
        etree_close(MAPPTR->map_ep);
@@ -40,7 +42,8 @@ void _ucvm_map_teardown() {
 /* iterate through all the entries, ignoring map_is_initialized */
 ucvm_map_t *get_map_by_label(const char *label)
 {
-   for(int i=0; i<UCVM_MAX_MAPS; i++) {
+   int i;
+   for(i=0; i<UCVM_MAX_MAPS; i++) {
      if(strcmp(label,map[i].map_label_str)== 0)
        return &map[i];
    }
@@ -50,7 +53,8 @@ ucvm_map_t *get_map_by_label(const char *label)
 /* get first empty map space */
 ucvm_map_t *_get_map_next()
 {
-   for(int i=0; i<UCVM_MAX_MAPS; i++) {
+   int i;
+   for(i=0; i<UCVM_MAX_MAPS; i++) {
      if(strlen(map[i].map_label_str) == 0)
        return &map[i];
    }
