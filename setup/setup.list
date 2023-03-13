@@ -188,7 +188,7 @@
 			"URL": "https://g-c662a6.a78b8.36fe.data.globus.org/ucvm/v23_4/model/cvmsi.tar.gz",
 			"Flags": "--enable-model-cvmsi --with-cvmsi-lib-path=lib --with-cvmsi-include-path=include --with-cvmsi-model-path=model/i26",
 			"Ask": "yes",
-                        "md5sum": "6b011b967d5dae600be5452f5ac0543d",
+                        "md5sum": "420ed04bb571555d117571ff63ca1d40",
 			"Order": 6		
 		},
 		"CVM-S4": {
@@ -199,7 +199,7 @@
 			"URL": "https://g-c662a6.a78b8.36fe.data.globus.org/ucvm/v23_4/model/cvms.tar.gz",
 			"Flags": "--enable-model-cvms --with-cvms-include-path=include --with-cvms-lib-path=lib --with-cvms-model-path=src",
 			"Ask": "yes",
-                        "md5sum": "7d72ae6bce0b33b300630ee0d7c9afa9",
+                        "md5sum": "905165a350520be26aa216bec9ca2d08",
 			"Order": 5
 		},
 		"CS173H": {
