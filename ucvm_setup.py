@@ -13,6 +13,7 @@ import json
 import platform
 import socket
 import shlex
+import pdb
 
 
 # Variables
@@ -36,6 +37,9 @@ error_out = False
 
 modelsToInstall = []
 librariesToInstall = []
+expandedModelsToInstall = []
+expandedModelsToInstall = []
+expandedLibrariesToInstall = []
 modelPaths = {}
 unsupported_features = []
 shell_script = ""
@@ -226,380 +230,102 @@ def installConfigMakeInstall(tarname, ucvmpath, type, config_data):
     callAndRecord(["cd", savedPath], True)
 
 
+def createExpandEnvPath(modelsToInstall, librariesToInstall) :
+    for library in librariesToInstall :
+        the_library = config_data["libraries"][library]
+        t= "${UCVM_INSTALL_PATH}/lib/"+the_library["Path"]+"/lib"
+        expandedLibrariesToInstall.append(t)
+
+    for model in modelsToInstall :
+        the_model = config_data["models"][model]
+        t="${UCVM_INSTALL_PATH}/model/"+the_model["Abbreviation"]+"/lib"
+        expandedModelsToInstall.append(t)
+
+
 ## create the ucvm_env.sh that is approriate to go into /etc/profile.d/
 ##
-def _add2LIBRARYPATH_bash(modelsToInstall, librariesToInstall) :
-    str="add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/lib/euclid3/lib\n"
-    str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/lib/euclid3/lib\n"
+def makeBashScript(ucvmsrc, ucvmpath, modellist, liblist, exmodellist, exliblist) :
+    call(["cp", "conf/template/ucvm_env.sh","conf/ucvm_env.sh"])
+    sedstr="s,%%UCVM_SRC_PATH%,"+ucvmsrc+",g"
+    call(["sed", "-i",sedstr,"conf/ucvm_env.sh"])
+    sedstr="s,%%UCVM_INSTALL_PATH%,"+ucvmpath+",g"
+    call(["sed", "-i",sedstr,"conf/ucvm_env.sh"])
+    sedstr="s,%%UCVM_modelsToInstall%,"+' '.join(modellist)+",g"
+    call(["sed", "-i",sedstr,"conf/ucvm_env.sh"])
+    sedstr="s,%%UCVM_librariesToInstall%,"+' '.join(liblist)+",g"
+    call(["sed", "-i",sedstr,"conf/ucvm_env.sh"])
+    sedstr="s,%%UCVM_expandedLibrariesToInstall%,"+' '.join(exliblist)+",g"
+    call(["sed", "-i",sedstr,"conf/ucvm_env.sh"])
+    sedstr="s,%%UCVM_expandedModelsToInstall%,"+' '.join(exmodellist)+",g"
+    call(["sed", "-i",sedstr,"conf/ucvm_env.sh"])
 
-    str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/lib/proj-5/lib\n"
-    str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/lib/proj-5/lib\n"
-
-    if "CS173" in modelsToInstall:
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cs173/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cs173/lib\n"
-    if "CS173H" in modelsToInstall:
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cs173h/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cs173hlib\n"
-    if "CVM-H" in modelsToInstall:
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvmh/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvmh/lib\n"
-    if "CVMHLABN" in modelsToInstall:
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvmhlabn/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvmhlabn/lib\n"
-    if "CVMHSGBN" in modelsToInstall:
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvmhsgbn/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvmhsgbn/lib\n"
-    if "CVMHVBN" in modelsToInstall:
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvmhvbn/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvmhvbn/lib\n"
-    if "CVMHSMBN" in modelsToInstall:
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvmhsmbn/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvmhsmbn/lib\n"
-    if "CVMHSBCBN" in modelsToInstall:
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvmhsbcbn/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvmhsbcbn/lib\n"
-    if "CVMHSBBN" in modelsToInstall:
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvmhsbbn/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvmhsbbn/lib\n"
-    if "CVMHSTBN" in modelsToInstall:
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvmhstbn/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvmhstbn/lib\n"
-    if "CVMHRBN" in modelsToInstall:
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvmhrbn/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvmhrbn/lib\n"
-    if "CVMHIBBN" in modelsToInstall:
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvmhibbn/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvmhibbn/lib\n"
-    if "CVM-S4" in modelsToInstall:
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvms/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvms/lib\n"
-    if "WFCVM" in modelsToInstall:
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/wfcvm/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/wfcvm/lib\n"
-    if "SJFZ" in modelsToInstall:
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/sjfz/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/sjfz/lib\n"
-    if "IMPERIAL" in modelsToInstall:
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/ivlsu/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/ivlsu/lib\n"
-    if "COACHELLA" in modelsToInstall:
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvlsu/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvlsu/lib\n"
-    if "ALBACORE" in modelsToInstall:
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/albacore/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/albacore/lib\n"
-    if "CVM-S4.26" in modelsToInstall:
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvms5/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvms5/lib\n"
-    if "CVM-S4.26.M01" in modelsToInstall:
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvmsi/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cvmsi/lib\n"
-    if "CenCalVM" in modelsToInstall:
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cencal/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cencal/lib\n"
-    if "CCA" in modelsToInstall:
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cca/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/model/cca/lib\n"
-    if "NetCDF" in librariesToInstall:
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/lib/netcdf/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/lib/netcdf/lib\n"
-        str=str+"add2LD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/lib/hdf5/lib\n"
-        str=str+"add2DYLD_LIBRARY_PATH ${UCVM_INSTALL_PATH}/lib/hdf5/lib\n"
-
-    return str
-
-def _add2path_bash(master):
-  str =      "function add2"+master+"() {\n"
-  str = str +"  if [ \"$"+master+"\" ] ; then\n"
-  str = str +"    if ! echo \"$"+master+"\" | grep -Eq \"(^|:)$1($|:)\" ; then\n"
-  str = str +"      if [ \"$2\" = \"after\" ] ; then\n"
-  str = str +"        export "+master+"=\"$"+master+":$1\"\n"
-  str = str +"      else\n"
-  str = str +"          export "+master+"=\"$1:$"+master+"\"\n"
-  str = str +"      fi\n"
-  str = str +"    fi\n"
-  str = str +"    else\n"
-  str = str +"       export "+master+"=\"$1\"\n"
-  str = str +"  fi\n"
-  str = str +"}\n"
-  return str
-
-def makeBashScript(ucvmsrc, ucvmpath, modelsToInstall, librariesToInstall) :
-    str="" 
-    fp=open("conf/ucvm_env.sh","w")
-    fp.write("## \n")
-    fp.write("##  models: [")
-    for x in modelsToInstall:
-      fp.write(" ")
-      fp.write(x)
-    fp.write(" ]")
-    fp.write("\n")
-    fp.write("##  libraries: [")
-    for x in librariesToInstall:
-      fp.write(" ")
-      fp.write(x)
-    fp.write(" ]")
-    fp.write("\n")
-    fp.write("## \n")
-    fp.write("\n")
-    str="export UCVM_SRC_PATH=" +ucvmsrc
-    fp.write(str)
-    fp.write("\n")
-    str="export UCVM_INSTALL_PATH="+ucvmpath.rstrip("/")
-    fp.write(str)
-    fp.write("\n")
-    fp.write("\n")
-
-    pstr=_add2path_bash("PATH")
-    fp.write(pstr)
-    fp.write("\n")
-    pstr=_add2path_bash("LD_LIBRARY_PATH")
-    fp.write(pstr)
-    fp.write("\n")
-    pstr=_add2path_bash("DYLD_LIBRARY_PATH")
-    fp.write(pstr)
-    fp.write("\n")
-    pstr=_add2path_bash("PYTHONPATH")
-    fp.write(pstr)
-    fp.write("\n")
-    ldpstr=_add2LIBRARYPATH_bash(modelsToInstall, librariesToInstall)
-    fp.write(ldpstr)
-
-## add to PYTHONPATH
-    pstr="add2PYTHONPATH ${UCVM_INSTALL_PATH}/utilities/pycvm"
-    fp.write(pstr)
-    fp.write("\n")
-
-## add to PATH
-    pstr="add2PATH ${UCVM_INSTALL_PATH}/bin"
-    fp.write(pstr)
-    fp.write("\n")
-    pstr="add2PATH ${UCVM_INSTALL_PATH}/utilities"
-    fp.write(pstr)
-    fp.write("\n")
-    fp.close();
+def makeCshScript(ucvmsrc, ucvmpath, modellist, liblist, exmodellist, exliblist) :
+    call(["cp", "conf/template/ucvm_env.csh","conf/ucvm_env.csh"])
+    sedstr="s,%%UCVM_SRC_PATH%,"+ucvmsrc+",g"
+    call(["sed", "-i",sedstr,"conf/ucvm_env.csh"])
+    sedstr="s,%%UCVM_INSTALL_PATH%,"+ucvmpath+",g"
+    call(["sed", "-i",sedstr,"conf/ucvm_env.csh"])
+    sedstr="s,%%UCVM_modelsToInstall%,"+' '.join(modellist)+",g"
+    call(["sed", "-i",sedstr,"conf/ucvm_env.csh"])
+    sedstr="s,%%UCVM_librariesToInstall%,"+' '.join(liblist)+",g"
+    call(["sed", "-i",sedstr,"conf/ucvm_env.csh"])
+    sedstr="s,%%UCVM_expandedLibrariesToInstall%,"+' '.join(exliblist)+",g"
+    call(["sed", "-i",sedstr,"conf/ucvm_env.csh"])
+    sedstr="s,%%UCVM_expandedModelsToInstall%,"+' '.join(exmodellist)+",g"
+    call(["sed", "-i",sedstr,"conf/ucvm_env.csh"])
 
 ## create the ucvm_env.py that is python script can be import to make sure
 ## LD_LIBRARY_PATH and DYLD_LIBRARY_PATH is setup up
 ##
-def _add2LIBRARYPATH_python(modelsToInstall, librariesToInstall) :
-    str="   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH +\"/lib/euclid3/lib\")\n"
-    str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"/lib/euclid3/lib\")\n"
-
-    str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"lib/proj-5/lib\")\n"
-    str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"lib/proj-5/lib\")\n"
-
-    if "CS173" in modelsToInstall:
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cs173/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cs173/lib\")\n"
-    if "CS173H" in modelsToInstall:
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cs173h/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cs173hlib\")\n"
-    if "CVM-H" in modelsToInstall:
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvmh/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvmh/lib\")\n"
-    if "CVMHLABN" in modelsToInstall:
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvmhlabn/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvmhlabn/lib\")\n"
-    if "CVMHSGBN" in modelsToInstall:
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvmhsgbn/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvmhsgbn/lib\")\n"
-    if "CVMHVBN" in modelsToInstall:
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvmhvbn/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvmhvbn/lib\")\n"
-    if "CVMHSMBN" in modelsToInstall:
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvmhsmbn/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvmhsmbn/lib\")\n"
-    if "CVMHSBCBN" in modelsToInstall:
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvmhsbcbn/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvmhsbcbn/lib\")\n"
-    if "CVMHSBBN" in modelsToInstall:
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvmhsbbn/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvmhsbbn/lib\")\n"
-    if "CVMHSTBN" in modelsToInstall:
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvmhstbn/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvmhstbn/lib\")\n"
-    if "CVMHRBN" in modelsToInstall:
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvmhrbn/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvmhrbn/lib\")\n"
-    if "CVMHIBBN" in modelsToInstall:
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvmhibbn/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvmhibbn/lib\")\n"
-    if "CVM-S4" in modelsToInstall:
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvms/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvms/lib\")\n"
-    if "WFCVM" in modelsToInstall:
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/wfcvm/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/wfcvm/lib\")\n"
-    if "SJFZ" in modelsToInstall:
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/sjfz/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/sjfz/lib\")\n"
-    if "IMPERIAL" in modelsToInstall:
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/ivlsu/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/ivlsu/lib\")\n"
-    if "COACHELLA" in modelsToInstall:
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvlsu/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvlsu/lib\")\n"
-    if "ALBACORE" in modelsToInstall:
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/albacore/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/albacore/lib\")\n"
-    if "CVM-S4.26" in modelsToInstall:
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvms5/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvms5/lib\")\n"
-    if "CVM-S4.26.M01" in modelsToInstall:
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvmsi/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cvmsi/lib\")\n"
-    if "CenCalVM" in modelsToInstall:
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cencal/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cencal/lib\")\n"
-    if "CCA" in modelsToInstall:
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cca/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"model/cca/lib\")\n"
-    if "NetCDF" in librariesToInstall:
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"lib/netcdf/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"lib/netcdf/lib\")\n"
-        str=str+"   add2LD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"lib/hdf5/lib\")\n"
-        str=str+"   add2DYLD_LIBRARY_PATH(UCVM_INSTALL_PATH + \"lib/hdf5/lib\")\n"
-
-    return str
-
-def _add2path_python():
-  str =      "def _add2env(PNAME, path) :\n"
-  str = str +"  my_path=my_env.get(PNAME,False)\n"
-  str = str +"  if my_path != False :\n"
-  str = str +"    if my_path.find(path) != -1 :\n"
-  str = str +"        my_path = my_path + \":\" + path\n"
-  str = str +"  else :\n"
-  str = str +"    my_path = path\n"
-  str = str +"  my_env[PNAME] = my_path\n\n"
-  str = str +"def add2PATH(path) :\n"
-  str = str +"  _add2env(\"PATH\",path)\n\n"
-  str = str +"def add2LD_LIBRARY_PATH(path) :\n"
-  str = str +"  _add2env(\"LD_LIBRARY_PATH\",path)\n\n"
-  str = str +"def add2DYLD_LIBRARY_PATH(path) :\n"
-  str = str +"  _add2env(\"DYLD_LIBRARY_PATH\",path)\n\n"
-  return str
-
-def makePythonScript(ucvmsrc, ucvmpath, modelsToInstall, librariesToInstall) :
-    str="" 
-    fp=open("conf/ucvm_env.py","w")
-    fp.write("## \n")
-    fp.write("##  models: [")
-    for x in modelsToInstall:
-      fp.write(" ")
-      fp.write(x)
-    fp.write(" ]")
-    fp.write("\n")
-    fp.write("##  libraries: [")
-    for x in librariesToInstall:
-      fp.write(" ")
-      fp.write(x)
-    fp.write(" ]\n")
-    fp.write("## \n\n")
-    str="import os\n"
-    fp.write(str)
-    str="UCVM_SRC_PATH=\"" + ucvmsrc + "\"\n"
-    fp.write(str)
-    str="UCVM_INSTALL_PATH=\""+ucvmpath.rstrip("/")+"\"\n"
-    fp.write(str)
-    str="my_env=os.environ\n\n"
-    fp.write(str)
-
-    pstr=_add2path_python()
-    fp.write(pstr)
-    str="def setup_ucvm_env():\n"
-    fp.write(str)
-    ldpstr=_add2LIBRARYPATH_python(modelsToInstall, librariesToInstall)
-    fp.write(ldpstr)
-
-## add to PATH
-    pstr="   add2PATH(UCVM_INSTALL_PATH + \"bin\")\n"
-    fp.write(pstr)
-    pstr="   add2PATH(UCVM_INSTALL_PATH + \"utilities\")\n"
-    fp.write(pstr)
-    fp.close();
+def makePythonScript(ucvmsrc, ucvmpath, modellist, liblist, exmodellist, exliblist) :
+    call(["cp", "conf/template/ucvm_env.py","conf/ucvm_env.py"])
+    sedstr="s,%%UCVM_SRC_PATH%,"+ucvmsrc+",g"
+    call(["sed", "-i",sedstr,"conf/ucvm_env.py"])
+    sedstr="s,%%UCVM_INSTALL_PATH%,"+ucvmpath+",g"
+    call(["sed", "-i",sedstr,"conf/ucvm_env.py"])
+    sedstr="s,%%UCVM_modelsToInstall%,"+' '.join(modellist)+",g"
+    call(["sed", "-i",sedstr,"conf/ucvm_env.py"])
+    sedstr="s,%%UCVM_librariesToInstall%,"+' '.join(liblist)+",g"
+    call(["sed", "-i",sedstr,"conf/ucvm_env.py"])
+    sedstr="s#%%UCVM_expandedLibrariesToInstall%#"+','.join( '\"'+x+'\"' for x in exliblist)+"#g"
+    call(["sed", "-i",sedstr,"conf/ucvm_env.py"])
+    sedstr="s#%%UCVM_expandedModelsToInstall%#"+','.join(exmodellist)+"#g"
+    call(["sed", "-i",sedstr,"conf/ucvm_env.py"])
 
 def _addInstallNameTool_bash(modelsToInstall, librariesToInstall):
-    str=""
-    if "Euclid3" in librariesToInstall:
-        str=str+"install_name_tool -change libetree.so ${MY_UCVM_INSTALL_PATH}/lib/euclid3/lib/libetree.so $1\n"
-    if "CS173" in modelsToInstall:
-        str=str+"install_name_tool -change libcs173.so ${MY_UCVM_INSTALL_PATH}/model/cs173/lib/libcs173.so $1\n"
-    if "CS173H" in modelsToInstall:
-        str=str+"install_name_tool -change libcs173h.so ${MY_UCVM_INSTALL_PATH}/model/cs173h/lib/libcs173h.so $1\n"
-    if "CVM-H" in modelsToInstall:
-        str=str+"install_name_tool -change libcvmh.so ${MY_UCVM_INSTALL_PATH}/model/cvmh/lib/libcvmh.so $1\n"
-    if "CVMHLABN" in modelsToInstall:
-        str=str+"install_name_tool -change libcvmhlabn.so ${MY_UCVM_INSTALL_PATH}/model/cvmhlabn/lib/libcvmhlabn.so $1\n"
-    if "CVMHSGBN" in modelsToInstall:
-        str=str+"install_name_tool -change libcvmhsgbn.so ${MY_UCVM_INSTALL_PATH}/model/cvmhsgbn/lib/libcvmhsgbn.so $1\n"
-    if "CVMHVBN" in modelsToInstall:
-        str=str+"install_name_tool -change libcvmhvbn.so ${MY_UCVM_INSTALL_PATH}/model/cvmhvbn/lib/libcvmhvbn.so $1\n"
-    if "CVMHSMBN" in modelsToInstall:
-        str=str+"install_name_tool -change libcvmhsmbn.so ${MY_UCVM_INSTALL_PATH}/model/cvmhsmbn/lib/libcvmhsmbn.so $1\n"
-    if "CVMHSBCBN" in modelsToInstall:
-        str=str+"install_name_tool -change libcvmhsbcbn.so ${MY_UCVM_INSTALL_PATH}/model/cvmhsbcbn/lib/libcvmhsbcbn.so $1\n"
-    if "CVMHSBBN" in modelsToInstall:
-        str=str+"install_name_tool -change libcvmhsbbn.so ${MY_UCVM_INSTALL_PATH}/model/cvmhsbbn/lib/libcvmhsbbn.so $1\n"
-    if "CVMHSTBN" in modelsToInstall:
-        str=str+"install_name_tool -change libcvmhstbn.so ${MY_UCVM_INSTALL_PATH}/model/cvmhstbn/lib/libcvmhstbn.so $1\n"
-    if "CVMHRBN" in modelsToInstall:
-        str=str+"install_name_tool -change libcvmhrbn.so ${MY_UCVM_INSTALL_PATH}/model/cvmhrbn/lib/libcvmhrbn.so $1\n"
-    if "CVMHIBBN" in modelsToInstall:
-        str=str+"install_name_tool -change libcvmhibbn.so ${MY_UCVM_INSTALL_PATH}/model/cvmhibbn/lib/libcvmhibbn.so $1\n"
-    if "CVM-S4" in modelsToInstall:
-        str=str+"install_name_tool -change libcvms.so ${MY_UCVM_INSTALL_PATH}/model/cvms/lib/libcvms.so $1\n"
-    if "WFCVM" in modelsToInstall:
-        str=str+"install_name_tool -change libwfcvm.so ${MY_UCVM_INSTALL_PATH}/model/wfcvm/lib/libwfcvm.so $1\n"
-    if "SJFZ" in modelsToInstall:
-        str=str+"install_name_tool -change libsjfz.so ${MY_UCVM_INSTALL_PATH}/model/sjfz/lib/libsjfz.so $1\n"
-    if "IMPERIAL" in modelsToInstall:
-        str=str+"install_name_tool -change libivlsu.so ${MY_UCVM_INSTALL_PATH}/model/ivlsu/lib/libivlsu.so $1\n"
-    if "COACHELLA" in modelsToInstall:
-        str=str+"install_name_tool -change libcvlsu.so ${MY_UCVM_INSTALL_PATH}/model/cvlsu/lib/libcvlsu.so $1\n"
-    if "ALBACORE" in modelsToInstall:
-        str=str+"install_name_tool -change libalbacore.so ${MY_UCVM_INSTALL_PATH}/model/albacore/lib/libalbacore.so $1\n"
-    if "CVM-S4.26" in modelsToInstall:
-        str=str+"install_name_tool -change libcvms5.so ${MY_UCVM_INSTALL_PATH}/model/cvms5/lib/libcvms5.so $1\n"
-    if "CVM-S4.26.M01" in modelsToInstall:
-        str=str+"install_name_tool -change libcvmsi.so ${MY_UCVM_INSTALL_PATH}/model/cvmsi/lib/libcvmsi.so $1\n"
-    if "CenCalVM" in modelsToInstall:
-        str=str+"install_name_tool -change libcencal.so ${MY_UCVM_INSTALL_PATH}/model/cencal/lib/libcencal.so $1\n"
-    if "CCA" in modelsToInstall:
-        str=str+"install_name_tool -change libcca.so ${MY_UCVM_INSTALL_PATH}/model/cca/lib/libcca.so $1\n"
+    str="\n"
+## very specific case, where Euclid3's actual lib name is etree
+## for libraries, only add an entry if there is a Libname key to the_library
+    for library in librariesToInstall :
+        the_library = config_data["libraries"][library]
+        print(the_library.keys())
+        if "Libname"  in the_library.keys() :
+          t="install_name_tool -change lib"+the_library["Libname"]+".so ${MY_UCVM_INSTALL_PATH}/lib/"+the_library["Path"]+"/lib/lib"+the_library["Libname"]+".so $1 \n"
+          str=str+t
+
+    for model in modelsToInstall :
+        the_model = config_data["models"][model]
+        print(the_model.keys())
+        if "Libname" in the_model.keys() :
+          t="install_name_tool -change lib"+the_model["Libname"]+".so ${MY_UCVM_INSTALL_PATH}/lib/"+the_model["Path"]+"/lib/lib"+the_model["Libname"]+".so $1 \n"
+        else : 
+          t="install_name_tool -change lib"+the_model["Path"]+".so ${MY_UCVM_INSTALL_PATH}/lib/"+the_model["Path"]+"/lib/lib"+the_model["Path"]+".so $1 \n"
+        str=str+t
+
     return str
 
-def makeDyLibNameChangeScript(ucvmsrc, ucvmpath, modelsToInstall, librariesToInstall) :
-    str="" 
-    fp=open("conf/call_install_name_tool","w")
-    fp.write("#!/bin/bash \n")
-    fp.write("## \n")
-    fp.write("##  models: [")
-    for x in modelsToInstall:
-      fp.write(" ")
-      fp.write(x)
-    fp.write(" ]")
-    fp.write("\n")
-    fp.write("##  libraries: [")
-    for x in librariesToInstall:
-      fp.write(" ")
-      fp.write(x)
-    fp.write(" ]")
-    fp.write("\n")
-    fp.write("## \n")
-    fp.write("## workaround for macOS's system-integrity-protection's handling\n")
-    fp.write("## of DYLD/LD_LIBRARY_PATH\n")
-    fp.write("## \n")
-    fp.write("\n")
-    str="export MY_UCVM_SRC_PATH=" +ucvmsrc
-    fp.write(str)
-    fp.write("\n")
-    str="export MY_UCVM_INSTALL_PATH="+ucvmpath.rstrip("/")
-    fp.write(str)
-    fp.write("\n")
+def makeDyLibNameChangeScript(ucvmsrc, ucvmpath, modellist, liblist) :
+    call(["cp", "conf/template/call_install_name_tool","conf/call_install_name_tool"])
+    sedstr="s,%%UCVM_SRC_PATH%,"+ucvmsrc+",g"
+    call(["sed", "-i",sedstr,"conf/call_install_name_tool"])
+    sedstr="s,%%UCVM_INSTALL_PATH%,"+ucvmpath+",g"
+    call(["sed", "-i",sedstr,"conf/call_install_name_tool"])
+    sedstr="s,%%UCVM_expandedLibrariesToInstall%,"+' '.join(liblist)+",g"
+    call(["sed", "-i",sedstr,"conf/call_install_name_tool"])
+    sedstr="s,%%UCVM_expandedModelsToInstall%,"+' '.join(modellist)+",g"
+    call(["sed", "-i",sedstr,"conf/call_install_name_tool"])
 
-
+    fp=open("conf/call_install_name_tool","a")
     ldpstr=_addInstallNameTool_bash(modelsToInstall, librariesToInstall)
     fp.write(ldpstr)
     fp.close()
@@ -608,7 +334,7 @@ def process_user_path(p):
     global ucvmpath
     ucvmpath = p
     
-## link proj-5's library to PROJ_LIB location if PROJ_LIB is defined
+## link proj-5's library to PROJ_LIB location if PROJ_LIB is not defined
 def linkPROJ_5(ucvmpath) :
    try :
       proj_lib = os.environ['PROJ_LIB']
@@ -716,6 +442,7 @@ try:
     config_data = json.loads(json_string)
 except OSError as e:
     eG(e, "Parsing available model list.")
+  
 
 print("\nPlease answer the following questions to install UCVM.\n")
 print("Note that this install and build process may take up to an hour depending on your")
@@ -945,9 +672,15 @@ callAndRecord(["make", "clean"])
 callAndRecord(["make"])
 
 if platform.system() == "Darwin" or platform.system() == "Linux" or dynamic_flag == True:
-    makeBashScript(os.getcwd(), ucvmpath ,modelsToInstall, librariesToInstall)
-    makePythonScript(os.getcwd(), ucvmpath ,modelsToInstall, librariesToInstall)
-    makeDyLibNameChangeScript(os.getcwd(), ucvmpath, modelsToInstall, librariesToInstall)
+    createExpandEnvPath(modelsToInstall, librariesToInstall)
+    makeCshScript(os.getcwd(), ucvmpath , modelsToInstall, librariesToInstall,
+                   expandedModelsToInstall, expandedLibrariesToInstall)
+    makeBashScript(os.getcwd(), ucvmpath , modelsToInstall, librariesToInstall,
+                   expandedModelsToInstall, expandedLibrariesToInstall)
+    makePythonScript(os.getcwd(), ucvmpath , modelsToInstall, librariesToInstall,
+                     expandedModelsToInstall, expandedLibrariesToInstall)
+    makeDyLibNameChangeScript(os.getcwd(), ucvmpath, 
+                              modelsToInstall, librariesToInstall)
     linkPROJ_5(ucvmpath)
 
 print("\nInstalling UCVM")

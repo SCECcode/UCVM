@@ -1,0 +1,12 @@
+#!/bin/bash 
+## 
+##  models: [ %%UCVM_modelsToInstall% ]
+##  libraries: [ %%UCVM_librariesToInstall% ]
+##
+## workaround for macOS's system-integrity-protection's handling
+## of DYLD/LD_LIBRARY_PATH
+## 
+
+export MY_UCVM_SRC_PATH=%%UCVM_SRC_PATH%
+export MY_UCVM_INSTALL_PATH=%%UCVM_INSTALL_PATH%
+

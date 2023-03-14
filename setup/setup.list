@@ -255,6 +255,7 @@
 		"Proj4": {
 			"Path": "proj-5",
                         "Lib": "proj-5.0.0",
+                        "Libname": "proj",
                         "Size": "30M",
 			"URL": "https://g-c662a6.a78b8.36fe.data.globus.org/ucvm/v22_7/lib/proj-5.0.0.tar.gz",
 			"Required": "yes",
@@ -275,6 +276,7 @@
 		"Euclid3": {
 			"Path": "euclid3",
                         "Lib": "euclid3-1.3",
+                        "Libname": "etree",
                         "Size": "4.7M",
 			"URL": "https://g-c662a6.a78b8.36fe.data.globus.org/ucvm/v22_7/lib/euclid3-1.3.tar.gz",
 			"Required": "yes",
