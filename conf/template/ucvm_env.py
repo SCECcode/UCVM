@@ -36,7 +36,7 @@ def setup_ucvm_env():
      add2DYLD_LIBRARY_PATH(i)
 
    llist = [ %%UCVM_expandedLibrariesToInstall% ]
-   for i in list:
+   for i in llist:
      add2LD_LIBRARY_PATH(i)
      add2DYLD_LIBRARY_PATH(i)
 
