@@ -51,7 +51,7 @@ endif
 
 all: ${CHANGE_LIST}
 
-ucvm.conf: ucvm_template.conf
+ucvm.conf: template/ucvm.conf
 	cp $^ $@
 	${SED} "s,PREFIX,${prefix},g" $@
 

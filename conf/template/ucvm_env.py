@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 ## 
 ##  models: [ %%UCVM_modelsToInstall% ]
 ##  libraries: [ %%UCVM_librariesToInstall% ]

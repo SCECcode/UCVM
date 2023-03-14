@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 ## 
 ##  models: [ %%UCVM_modelsToInstall% ]
 ##  libraries: [ %%UCVM_librariesToInstall% ]

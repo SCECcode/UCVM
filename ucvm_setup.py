@@ -287,9 +287,9 @@ def makePythonScript(ucvmsrc, ucvmpath, modellist, liblist, exmodellist, exlibli
     call(["sed", "-i",sedstr,"conf/ucvm_env.py"])
     sedstr="s,%%UCVM_librariesToInstall%,"+' '.join(liblist)+",g"
     call(["sed", "-i",sedstr,"conf/ucvm_env.py"])
-    sedstr="s#%%UCVM_expandedLibrariesToInstall%#"+','.join( '\"'+x+'\"' for x in exliblist)+"#g"
+    sedstr="s#%%UCVM_expandedLibrariesToInstall%#"+','.join('\"'+x+'\"' for x in exliblist)+"#g"
     call(["sed", "-i",sedstr,"conf/ucvm_env.py"])
-    sedstr="s#%%UCVM_expandedModelsToInstall%#"+','.join(exmodellist)+"#g"
+    sedstr="s#%%UCVM_expandedModelsToInstall%#"+','.join('\"'+x+'\"' for x in exmodellist)+"#g"
     call(["sed", "-i",sedstr,"conf/ucvm_env.py"])
 
 def _addInstallNameTool_bash(modelsToInstall, librariesToInstall):
