@@ -26,6 +26,8 @@
 #define WORKERREADY 99
 #define DIEOFF -1
 
+int debug=0;
+
 /* Get opt args */
 extern char *optarg;
 extern int optind, opterr, optopt;
@@ -267,7 +269,7 @@ int main(int argc, char **argv) {
 		double tempDepths[2];
 		float *retDepths = malloc(nx * sizeof(float));
 
-		printf("Current line: %d. Progress: %.2f\%\n", currentline, (float)currentline / (float)ny * 100.0f);
+		printf("Current line: %d. Progress: %.2f\\%\n", currentline, (float)currentline / (float)ny * 100.0f);
 
 		for (i = 0; i < nx; i++) {
 			pnts[0].coord[1] = (currentline * spacing) + latlon[0];
@@ -277,11 +279,11 @@ int main(int argc, char **argv) {
 
 			retDepths[i] = (float)tempDepths[0];
 
-			//printf("%f %f %f %d\n", pnts[0].coord[0], pnts[0].coord[1], retDepths[i], rank);
-			//if (rank == 0) {
-				//printf("On index: %d\n", i);
-			//}
+			if(debug) {
 
+			  printf("PNTS:%f %f %f %d\n", pnts[0].coord[0], pnts[0].coord[1], retDepths[i], rank);
+			  // if (rank == 0) { printf("On index: %d\n", i);}
+                        }
 		}
 
 		MPI_File_set_view(fh, currentline * nx * sizeof(float), MPI_FLOAT, MPI_FLOAT, "native", MPI_INFO_NULL);
