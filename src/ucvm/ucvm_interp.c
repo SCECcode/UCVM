@@ -138,20 +138,14 @@ int ucvm_interp_taper(double zmin, double zmax, ucvm_ctype_t cmode,
     double taper_data_cmb_rho = ucvm_nafe_drake_rho(taper_data_cmb_vp);
 
 
-if(interp_debug)
-fprintf(stderr,"XXX%lf flooring crust, before with vs(%lf) and vp(%lf)\n", data->depth, taper_data_cmb_vs, taper_data_cmb_vp);	
     if(data->interp_crust.vs < taper_data_cmb_vs) {
       data->cmb.vs = data->interp_crust.vs;
       data->cmb.vp = data->interp_crust.vp;
       data->cmb.rho = data->interp_crust.rho;
-if(interp_debug)
-fprintf(stderr,"XXX%lf            flooring in crust(interp), with vs(%lf) and vp(%lf), rho(%lf)\n", data->depth, data->cmb.vs, data->cmb.vp, data->cmb.rho);	
       } else {
         data->cmb.vs = taper_data_cmb_vs;
         data->cmb.vp = taper_data_cmb_vp;
         data->cmb.rho = taper_data_cmb_rho;
-if(interp_debug)
-fprintf(stderr,"XXX%lf            flooring in crust(calc), with vs(%lf) and vp(%lf), rho(%lf)\n", data->depth, data->cmb.vs, data->cmb.vp,data->cmb.rho);	
     }
 
     double ratio = (data->cmb.vp/data->cmb.vs);
@@ -159,45 +153,27 @@ fprintf(stderr,"XXX%lf            flooring in crust(calc), with vs(%lf) and vp(%
     if(ucvm_interp_vs_floor != UCVM_DEFAULT_NULL_FLOOR &&
           data->cmb.vs < ucvm_interp_vs_floor)
     { 
-if(interp_debug)
-fprintf(stderr,"XXX%lf flooring vs, before with vs(%lf) and vp(%lf) rho(%lf)\n", data->depth, data->cmb.vs, data->cmb.vp, data->cmb.rho);	
         data->cmb.vs= ucvm_interp_vs_floor ;
         data->cmb.vp= data->cmb.vs * (ratio);
-if(interp_debug)
-fprintf(stderr,"XXX%lf            flooring vs, with vs(%lf) and vp(%lf) rho(%lf) .. ratio(%lf)\n", data->depth, data->cmb.vs, data->cmb.vp, data->cmb.rho, ratio);	
     }
 
-    if(ucvm_interp_vp_floor != UCVM_DEFAULT_NULL_FLOOR && data->cmb.vp < ucvm_interp_vp_floor)
+    if(ucvm_interp_vp_floor != UCVM_DEFAULT_NULL_FLOOR && 
+          data->cmb.vp < ucvm_interp_vp_floor)
     { 
-if(interp_debug)
-fprintf(stderr,"XXX%lf flooring vp, with vs(%lf) and vp(%lf), rho(%lf)\n", data->depth, data->cmb.vs, data->cmb.vp,data->cmb.rho);
         data->cmb.vp= ucvm_interp_vp_floor ;
-if(interp_debug)
-fprintf(stderr,"XXX%lf            flooring vp, with vs(%lf) and vp(%lf) rho(%lf)\n",data->depth, data->cmb.vs, data->cmb.vp,data->cmb.rho);
     }
 
 
-if(interp_debug) 
-  fprintf(stderr,"XXX%lf flooring rh, with rho(%lf)\n", data->depth, data->cmb.rho);
     if(ucvm_interp_density_floor != UCVM_DEFAULT_NULL_FLOOR &&
           data->cmb.rho < ucvm_interp_density_floor)
     { 
 	  data->cmb.rho= ucvm_interp_density_floor ;
-if(interp_debug)
-fprintf(stderr,"XXX%lf            flooring density, with vs(%lf) and vp(%lf) rho(%lf)\n",data->depth, data->cmb.vs, data->cmb.vp, data->cmb.rho);
     }
 
     if( (data->cmb.vp / data->cmb.vs) < 1.45)
     { 
-if(interp_debug)
-fprintf(stderr,"XXX%lf flooring ratio, with vs(%lf) and vp(%lf) rho(%lf)\n", data->depth, data->cmb.vs, data->cmb.vp, data->cmb.rho);
         data->cmb.vs= data->cmb.vp/1.45;
-if(interp_debug)
-fprintf(stderr,"XXX%lf            flooring ratio, with vs(%lf) and vp(%lf) rho(%lf)\n",data->depth, data->cmb.vs, data->cmb.vp, data->cmb.rho);
     }
-
-if(interp_debug)
-fprintf(stderr,"XXX%lf FINAL, with vs(%lf) and vp(%lf) density(%lf)\n\n", data->depth, data->cmb.vs, data->cmb.vp,data->cmb.rho);	
 
   }
 
