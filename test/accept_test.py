@@ -16,11 +16,13 @@ def test_vs30_query(dir):
     # Basic vs30 test.
     os.chdir(dir)
 
+    vs30_query_call = "../bin/vs30_query"
     if platform.system() == "Darwin" :
        myproc = Popen(["../utilities/call_install_name_tool", "../bin/vs30_query"], stdout=PIPE, stderr=STDOUT)
        myoutput = myproc.communicate()
+       vs30_query_call = "../utilities/run_vs30_query.sh"
 
-    proc = Popen(["../bin/vs30_query", "-f", "../conf/ucvm.conf", "-m", "bbp1d", \
+    proc = Popen([vs30_query_call, "-f", "../conf/ucvm.conf", "-m", "bbp1d", \
                   "-i", "0.1"], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
     output = proc.communicate(input=b"-118 34\n-117 35")[0]
     
@@ -39,17 +41,19 @@ def test_ssh_generate(dir):
     # writes result to install/tests directory
     os.chdir(dir)
 
+    ssh_generate_call = "../bin/ssh_generate"
     if platform.system() == "Darwin" :
        myproc = Popen(["../utilities/call_install_name_tool", "../bin/ssh_generate"], stdout=PIPE, stderr=STDOUT)
        myoutput = myproc.communicate()
+       ssh_generate_call = "../utilities/run_ssh_generate.sh"
 
-    proc = Popen(["../bin/ssh_generate", "-u", "0.1", "-d", "20", "-l", "50", \
+    proc = Popen([ssh_generate_call, "-u", "0.1", "-d", "20", "-l", "50", \
                   "-s", "5", "-a", "100", "-b", "100", "-c", "100", \
                   "-f", "inputs/floats.in", "-x", "inputs/floats_complex.in", \
                   "-m", "ssh_generate.out"], \
                   stdout=PIPE, stdin=PIPE, stderr=STDOUT)    
     output = proc.communicate()
-    
+
     f = open("./ssh_generate.out", "rb")
     generatedfloats = array.array("f")
     generatedfloats.fromfile(f, 100 * 100 * 100)
