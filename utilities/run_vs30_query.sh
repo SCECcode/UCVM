@@ -1,6 +1,6 @@
 #!/bin/bash
 
-## this is to run the ssh_generate with proper LD_LIBRARY_PATH and
+## this is to run the vs30_query with proper LD_LIBRARY_PATH and
 ## DYLD_LIBRARY_PATH that mac os seems to like to eliminate under
 ## SIP mode 
 
@@ -18,6 +18,6 @@ if [ "$UCVM_INSTALL_PATH" ] ; then
 fi
 
 source ${SCRIPT_DIR}/../conf/ucvm_env.sh
-${SCRIPT_DIR}/ssh_generate $@ 
+${SCRIPT_DIR}/vs30_query $@ 
 
 exit 0
