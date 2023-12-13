@@ -242,37 +242,43 @@ def createExpandEnvPath(modelsToInstall, librariesToInstall) :
         expandedModelsToInstall.append(t)
 
 
+def callSed(sedstr,file) :
+    if platform.system() == "Darwin" :
+      call(["sed", "-i",".backup",sedstr,file])
+    else:
+      call(["sed", "-i",sedstr,file])
+
 ## create the ucvm_env.sh that is approriate to go into /etc/profile.d/
 ##
 def makeBashScript(ucvmsrc, ucvmpath, modellist, liblist, exmodellist, exliblist) :
     call(["cp", "conf/template/ucvm_env.sh","conf/ucvm_env.sh"])
     sedstr="s,%%UCVM_SRC_PATH%,"+ucvmsrc+",g"
-    call(["sed", "-i",sedstr,"conf/ucvm_env.sh"])
+    callSed(sedstr,"conf/ucvm_env.sh")
     sedstr="s,%%UCVM_INSTALL_PATH%,"+ucvmpath+",g"
-    call(["sed", "-i",sedstr,"conf/ucvm_env.sh"])
+    callSed(sedstr,"conf/ucvm_env.sh")
     sedstr="s,%%UCVM_modelsToInstall%,"+' '.join(modellist)+",g"
-    call(["sed", "-i",sedstr,"conf/ucvm_env.sh"])
+    callSed(sedstr,"conf/ucvm_env.sh")
     sedstr="s,%%UCVM_librariesToInstall%,"+' '.join(liblist)+",g"
-    call(["sed", "-i",sedstr,"conf/ucvm_env.sh"])
+    callSed(sedstr,"conf/ucvm_env.sh")
     sedstr="s,%%UCVM_expandedLibrariesToInstall%,"+' '.join(exliblist)+",g"
-    call(["sed", "-i",sedstr,"conf/ucvm_env.sh"])
+    callSed(sedstr,"conf/ucvm_env.sh")
     sedstr="s,%%UCVM_expandedModelsToInstall%,"+' '.join(exmodellist)+",g"
-    call(["sed", "-i",sedstr,"conf/ucvm_env.sh"])
+    callSed(sedstr,"conf/ucvm_env.sh")
 
 def makeCshScript(ucvmsrc, ucvmpath, modellist, liblist, exmodellist, exliblist) :
     call(["cp", "conf/template/ucvm_env.csh","conf/ucvm_env.csh"])
     sedstr="s,%%UCVM_SRC_PATH%,"+ucvmsrc+",g"
-    call(["sed", "-i",sedstr,"conf/ucvm_env.csh"])
+    callSed(sedstr,"conf/ucvm_env.csh")
     sedstr="s,%%UCVM_INSTALL_PATH%,"+ucvmpath+",g"
-    call(["sed", "-i",sedstr,"conf/ucvm_env.csh"])
+    callSed(sedstr,"conf/ucvm_env.csh")
     sedstr="s,%%UCVM_modelsToInstall%,"+' '.join(modellist)+",g"
-    call(["sed", "-i",sedstr,"conf/ucvm_env.csh"])
+    callSed(sedstr,"conf/ucvm_env.csh")
     sedstr="s,%%UCVM_librariesToInstall%,"+' '.join(liblist)+",g"
-    call(["sed", "-i",sedstr,"conf/ucvm_env.csh"])
+    callSed(sedstr,"conf/ucvm_env.csh")
     sedstr="s,%%UCVM_expandedLibrariesToInstall%,"+' '.join(exliblist)+",g"
-    call(["sed", "-i",sedstr,"conf/ucvm_env.csh"])
+    callSed(sedstr,"conf/ucvm_env.csh")
     sedstr="s,%%UCVM_expandedModelsToInstall%,"+' '.join(exmodellist)+",g"
-    call(["sed", "-i",sedstr,"conf/ucvm_env.csh"])
+    callSed(sedstr,"conf/ucvm_env.csh")
 
 ## create the ucvm_env.py that is python script can be import to make sure
 ## LD_LIBRARY_PATH and DYLD_LIBRARY_PATH is setup up
@@ -280,17 +286,17 @@ def makeCshScript(ucvmsrc, ucvmpath, modellist, liblist, exmodellist, exliblist)
 def makePythonScript(ucvmsrc, ucvmpath, modellist, liblist, exmodellist, exliblist) :
     call(["cp", "conf/template/ucvm_env.py","conf/ucvm_env.py"])
     sedstr="s,%%UCVM_SRC_PATH%,"+ucvmsrc+",g"
-    call(["sed", "-i",sedstr,"conf/ucvm_env.py"])
+    callSed(sedstr,"conf/ucvm_env.py")
     sedstr="s,%%UCVM_INSTALL_PATH%,"+ucvmpath+",g"
-    call(["sed", "-i",sedstr,"conf/ucvm_env.py"])
+    callSed(sedstr,"conf/ucvm_env.py")
     sedstr="s,%%UCVM_modelsToInstall%,"+' '.join(modellist)+",g"
-    call(["sed", "-i",sedstr,"conf/ucvm_env.py"])
+    callSed(sedstr,"conf/ucvm_env.py")
     sedstr="s,%%UCVM_librariesToInstall%,"+' '.join(liblist)+",g"
-    call(["sed", "-i",sedstr,"conf/ucvm_env.py"])
+    callSed(sedstr,"conf/ucvm_env.py")
     sedstr="s#%%UCVM_expandedLibrariesToInstall%#"+','.join('\"'+x+'\"' for x in exliblist)+"#g"
-    call(["sed", "-i",sedstr,"conf/ucvm_env.py"])
+    callSed(sedstr,"conf/ucvm_env.py")
     sedstr="s#%%UCVM_expandedModelsToInstall%#"+','.join('\"'+x+'\"' for x in exmodellist)+"#g"
-    call(["sed", "-i",sedstr,"conf/ucvm_env.py"])
+    callSed(sedstr,"conf/ucvm_env.py")
 
 def _addInstallNameTool_bash(modelsToInstall, librariesToInstall):
     str="\n"
@@ -317,13 +323,13 @@ def _addInstallNameTool_bash(modelsToInstall, librariesToInstall):
 def makeDyLibNameChangeScript(ucvmsrc, ucvmpath, modellist, liblist) :
     call(["cp", "conf/template/call_install_name_tool","conf/call_install_name_tool"])
     sedstr="s,%%UCVM_SRC_PATH%,"+ucvmsrc+",g"
-    call(["sed", "-i",sedstr,"conf/call_install_name_tool"])
+    callSed(sedstr,"conf/call_install_name_tool")
     sedstr="s,%%UCVM_INSTALL_PATH%,"+ucvmpath+",g"
-    call(["sed", "-i",sedstr,"conf/call_install_name_tool"])
+    callSed(sedstr,"conf/call_install_name_tool")
     sedstr="s,%%UCVM_expandedLibrariesToInstall%,"+' '.join(liblist)+",g"
-    call(["sed", "-i",sedstr,"conf/call_install_name_tool"])
+    callSed(sedstr,"conf/call_install_name_tool")
     sedstr="s,%%UCVM_expandedModelsToInstall%,"+' '.join(modellist)+",g"
-    call(["sed", "-i",sedstr,"conf/call_install_name_tool"])
+    callSed(sedstr,"conf/call_install_name_tool")
 
     fp=open("conf/call_install_name_tool","a")
     ldpstr=_addInstallNameTool_bash(modelsToInstall, librariesToInstall)
