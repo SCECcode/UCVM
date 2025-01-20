@@ -888,7 +888,7 @@ callAndRecord(["autoconf"])
 
 print("\nRunning ./configure for UCVM")
  
-ucvm_conf_command = ["./configure", "--enable-silent-rules", \
+ucvm_conf_command = ["./configure", \
                      "--with-etree-include-path=" + ucvmpath + "/lib/euclid3/include", \
                      "--with-etree-lib-path=" + ucvmpath + "/lib/euclid3/lib", \
                      "--with-proj4-include-path=" + ucvmpath + "/lib/proj-5/include", \
